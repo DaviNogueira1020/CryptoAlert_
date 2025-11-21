@@ -1,13 +1,13 @@
-import { Router } from "express";
-import { AlertsController } from "../controllers/alerts.controller";
+const { Router } = require("express");
+const { AlertsController } = require("../controllers/alerts.controller");
 
 const router = Router();
 const controller = new AlertsController();
 
-router.post("/", (req, res) => controller.create(req, res));
-router.get("/", (req, res) => controller.findAll(req, res));
-router.get("/:id", (req, res) => controller.findById(req, res));
-router.put("/:id", (req, res) => controller.update(req, res));
-router.delete("/:id", (req, res) => controller.delete(req, res));
+router.post("/", (req, res) => controller.criar(req, res));
+router.get("/", (req, res) => controller.listar(req, res));
+router.get("/:id", (req, res) => controller.buscarPorId(req, res));
+router.put("/:id", (req, res) => controller.atualizar(req, res));
+router.delete("/:id", (req, res) => controller.remover(req, res));
 
-export default router;
+module.exports = router;

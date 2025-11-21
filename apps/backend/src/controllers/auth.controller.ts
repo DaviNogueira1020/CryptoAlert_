@@ -26,7 +26,7 @@ class AuthController {
 
   me = async (req, res) => {
     try {
-      const result = await this.authService.me(req.user.id);
+      const result = await this.authService.me(req.userId);
       return res.json(result);
     } catch (error) {
       return res.status(400).json({ error: error.message });

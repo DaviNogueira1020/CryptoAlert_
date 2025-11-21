@@ -1,15 +1,14 @@
-import { prisma } from "../lib/prisma";
-import { CreateAlertDTO, UpdateAlertDTO } from "../types/AlertDTO";
+const prisma = require("../lib/prisma");
 
-export class AlertsRepository {
-  async create(data: CreateAlertDTO) {
+class AlertsRepository {
+  async create(data) {
     return prisma.alert.create({
       data,
       include: { user: true },
     });
   }
 
-  async findAll(userId?: number) {
+  async findAll(userId) {
     return prisma.alert.findMany({
       where: userId ? { userId } : undefined,
       include: { user: true },
@@ -17,14 +16,14 @@ export class AlertsRepository {
     });
   }
 
-  async findById(id: string) {
+  async findById(id) {
     return prisma.alert.findUnique({
       where: { id },
       include: { user: true },
     });
   }
 
-  async update(id: string, data: UpdateAlertDTO) {
+  async update(id, data) {
     return prisma.alert.update({
       where: { id },
       data,
@@ -32,15 +31,17 @@ export class AlertsRepository {
     });
   }
 
-  async delete(id: string) {
+  async delete(id) {
     return prisma.alert.delete({
       where: { id },
     });
   }
 
-  async findByUserIdAndCrypto(userId: number, crypto: string) {
+  async findByUserIdAndCrypto(userId, crypto) {
     return prisma.alert.findMany({
       where: { userId, crypto },
     });
   }
 }
+
+module.exports = { AlertsRepository };

@@ -1,6 +1,6 @@
-const { prisma } = require("../../config/prisma");
-const { hashPassword, comparePassword } = require("../../utils/hash");
-const { generateToken } = require("../../utils/generateToken");
+const prisma = require("../../lib/prisma");
+const { hashSenha, compararSenha } = require("../../utils/hash");
+const { gerarTokenJwt } = require("../../utils/jwt");
 
 async function register(data) {
   if (!data.email || !data.password) {
@@ -13,7 +13,7 @@ async function register(data) {
 
   if (exists) throw new Error("Email já cadastrado");
 
-  const hashed = await hashPassword(data.password);
+  const hashed = await hashSenha(data.password);
 
   const user = await prisma.user.create({
     data: {
@@ -29,7 +29,7 @@ async function register(data) {
       email: user.email,
       name: user.name,
     },
-    token: generateToken(user.id),
+    token: gerarTokenJwt(String(user.id)),
   };
 }
 
@@ -44,7 +44,7 @@ async function login(data) {
 
   if (!user) throw new Error("Credenciais inválidas");
 
-  const valid = await comparePassword(data.password, user.password);
+  const valid = await compararSenha(data.password, user.password);
   if (!valid) throw new Error("Credenciais inválidas");
 
   return {
@@ -53,7 +53,7 @@ async function login(data) {
       email: user.email,
       name: user.name,
     },
-    token: generateToken(user.id),
+    token: gerarTokenJwt(String(user.id)),
   };
 }
 

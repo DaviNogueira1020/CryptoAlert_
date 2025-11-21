@@ -1,6 +1,6 @@
-const { default: prisma } = require("../lib/prisma");
-const { hashPassword, comparePassword } = require("../utils/hash");
-const { generateJwtToken } = require("../utils/jwt");
+const prisma = require("../lib/prisma");
+const { hashSenha, compararSenha } = require("../utils/hash");
+const { gerarTokenJwt } = require("../utils/jwt");
 
 class AuthService {
   async register(data) {
@@ -10,7 +10,7 @@ class AuthService {
 
     if (userExists) throw new Error("Email já está em uso");
 
-    const hashed = await hashPassword(data.password);
+    const hashed = await hashSenha(data.password);
 
     const user = await prisma.user.create({
       data: {
@@ -20,7 +20,7 @@ class AuthService {
       },
     });
 
-    const token = generateJwtToken(String(user.id));
+    const token = gerarTokenJwt(String(user.id));
 
     return { user, token };
   }
@@ -32,10 +32,10 @@ class AuthService {
 
     if (!user) throw new Error("Credenciais inválidas");
 
-    const valid = await comparePassword(data.password, user.password);
+    const valid = await compararSenha(data.password, user.password);
     if (!valid) throw new Error("Credenciais inválidas");
 
-    const token = generateJwtToken(String(user.id));
+    const token = gerarTokenJwt(String(user.id));
 
     return { user, token };
   }

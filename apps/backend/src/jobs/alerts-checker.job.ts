@@ -1,4 +1,4 @@
-const { checkAllAlerts } = require("../services/alerts-checker.service");
+const { verificarTodosAlertas } = require("../services/alerts-checker.service");
 
 let checkInterval: NodeJS.Timeout | null = null;
 
@@ -6,23 +6,23 @@ let checkInterval: NodeJS.Timeout | null = null;
  * Start the alerts checker job
  * @param {number} intervalMs - Interval in milliseconds (default: 60000 = 1 minute)
  */
-function startAlertsJob(intervalMs: number = 60000) {
+function iniciarJobAlertas(intervalMs = 60000) {
   if (checkInterval) {
     console.warn("[AlertsJob] Job already running, skipping...");
     return;
   }
 
-  console.log(`[AlertsJob] Starting alerts checker job (interval: ${intervalMs}ms)`);
+  console.log(`[AlertsJob] Iniciando job de verificação de alertas (intervalo: ${intervalMs}ms)`);
 
-  // Run immediately on start
-  checkAllAlerts().catch((err: any) => {
-    console.error("[AlertsJob] Initial check failed:", err);
+  // Executa imediatamente ao iniciar
+  verificarTodosAlertas().catch((err) => {
+    console.error("[AlertsJob] Falha na verificação inicial:", err);
   });
 
-  // Then run periodically
+  // Executa periodicamente
   checkInterval = setInterval(() => {
-    checkAllAlerts().catch((err: any) => {
-      console.error("[AlertsJob] Check failed:", err);
+    verificarTodosAlertas().catch((err) => {
+      console.error("[AlertsJob] Falha na verificação:", err);
     });
   }, intervalMs);
 }
@@ -30,12 +30,18 @@ function startAlertsJob(intervalMs: number = 60000) {
 /**
  * Stop the alerts checker job
  */
-function stopAlertsJob() {
+function pararJobAlertas() {
   if (checkInterval) {
     clearInterval(checkInterval);
     checkInterval = null;
-    console.log("[AlertsJob] Alerts job stopped");
+    console.log("[AlertsJob] Job de alertas parado");
   }
 }
 
-module.exports = { startAlertsJob, stopAlertsJob };
+// Export em Português e aliases legados
+module.exports = {
+  iniciarJobAlertas,
+  pararJobAlertas,
+  startAlertsJob: iniciarJobAlertas,
+  stopAlertsJob: pararJobAlertas,
+};

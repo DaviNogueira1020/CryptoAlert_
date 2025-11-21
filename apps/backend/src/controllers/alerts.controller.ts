@@ -1,14 +1,13 @@
-import { Request, Response } from "express";
-import { AlertsService } from "../services/alerts.service";
+const { AlertsService } = require("../services/alerts.service");
 
 const service = new AlertsService();
 
-export class AlertsController {
-  async create(req: Request, res: Response) {
+class AlertsController {
+  async criar(req, res) {
     try {
       const { userId, crypto, targetPrice, direction } = req.body;
 
-      const newAlert = await service.create({
+      const newAlert = await service.criar({
         userId: Number(userId),
         crypto,
         targetPrice: Number(targetPrice),
@@ -16,48 +15,67 @@ export class AlertsController {
       });
 
       return res.status(201).json(newAlert);
-    } catch (err: any) {
+    } catch (err) {
       return res.status(err.status || 500).json({
-        error: err.message || "Internal server error",
+        error: err.message || "Erro interno do servidor",
         code: err.code || "INTERNAL_ERROR",
       });
     }
   }
 
-  async findAll(req: Request, res: Response) {
+  async listar(req, res) {
     try {
       const userId = req.query.userId ? Number(req.query.userId) : undefined;
-      const alerts = await service.findAll(userId);
+      const alerts = await service.listar(userId);
       return res.json(alerts);
-    } catch (err: any) {
-      return res.status(500).json({ error: "Failed to fetch alerts" });
+    } catch (err) {
+      return res.status(500).json({ error: "Falha ao buscar alertas" });
     }
   }
 
-  async findById(req: Request, res: Response) {
+  async buscarPorId(req, res) {
     try {
-      const alert = await service.findById(req.params.id);
+      const alert = await service.buscarPorId(req.params.id);
       return res.json(alert);
-    } catch (err: any) {
+    } catch (err) {
       return res.status(err.status || 500).json({ error: err.message });
     }
   }
 
-  async update(req: Request, res: Response) {
+  async atualizar(req, res) {
     try {
-      const updated = await service.update(req.params.id, req.body);
+      const updated = await service.atualizar(req.params.id, req.body);
       return res.json(updated);
-    } catch (err: any) {
+    } catch (err) {
       return res.status(err.status || 500).json({ error: err.message });
     }
   }
 
-  async delete(req: Request, res: Response) {
+  async remover(req, res) {
     try {
-      const deleted = await service.delete(req.params.id);
-      return res.json({ message: "Alert deleted successfully", data: deleted });
-    } catch (err: any) {
+      const deleted = await service.remover(req.params.id);
+      return res.json({ message: "Alerta removido com sucesso", data: deleted });
+    } catch (err) {
       return res.status(err.status || 500).json({ error: err.message });
     }
   }
 }
+
+// Compatibilidade: aliases legados para a API existente
+AlertsController.prototype.create = function (req, res) {
+  return this.criar(req, res);
+};
+AlertsController.prototype.findAll = function (req, res) {
+  return this.listar(req, res);
+};
+AlertsController.prototype.findById = function (req, res) {
+  return this.buscarPorId(req, res);
+};
+AlertsController.prototype.update = function (req, res) {
+  return this.atualizar(req, res);
+};
+AlertsController.prototype.delete = function (req, res) {
+  return this.remover(req, res);
+};
+
+module.exports = { AlertsController };

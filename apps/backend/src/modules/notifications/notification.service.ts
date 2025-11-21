@@ -1,4 +1,4 @@
-const { prisma } = require("../../config/prisma");
+const prisma = require("../../lib/prisma");
 
 async function create(userId, data) {
   if (!data.crypto || !data.target || !data.direction) {

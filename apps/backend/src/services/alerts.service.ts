@@ -1,15 +1,16 @@
-import { AlertsRepository } from "../repositories/alerts.repository";
-import { CreateAlertDTO, UpdateAlertDTO } from "../types/AlertDTO";
+const { AlertsRepository } = require("../repositories/alerts.repository");
 
-export class AlertsService {
-  private repo = new AlertsRepository();
+class AlertsService {
+  constructor() {
+    this.repo = new AlertsRepository();
+  }
 
-  async create(data: CreateAlertDTO) {
-    // Validate inputs
+  async criar(data) {
+    // Validar campos de entrada
     if (!data.crypto || !data.targetPrice || !data.direction) {
       throw {
         status: 400,
-        message: "Missing required fields: crypto, targetPrice, direction",
+        message: "Campos obrigatórios ausentes: crypto, targetPrice, direction",
         code: "MISSING_FIELDS",
       };
     }
@@ -17,7 +18,7 @@ export class AlertsService {
     if (!["above", "below"].includes(data.direction)) {
       throw {
         status: 400,
-        message: 'Direction must be "above" or "below"',
+        message: 'Direction deve ser "above" ou "below"',
         code: "INVALID_DIRECTION",
       };
     }
@@ -25,29 +26,48 @@ export class AlertsService {
     return this.repo.create(data);
   }
 
-  async findAll(userId?: number) {
+  async listar(userId) {
     return this.repo.findAll(userId);
   }
 
-  async findById(id: string) {
+  async buscarPorId(id) {
     const alert = await this.repo.findById(id);
     if (!alert) {
       throw {
         status: 404,
-        message: "Alert not found",
+        message: "Alerta não encontrado",
         code: "NOT_FOUND",
       };
     }
     return alert;
   }
 
-  async update(id: string, data: UpdateAlertDTO) {
-    await this.findById(id); // Verify exists
+  async atualizar(id, data) {
+    await this.buscarPorId(id); // Verificar existência
     return this.repo.update(id, data);
   }
 
-  async delete(id: string) {
-    await this.findById(id); // Verify exists
+  async remover(id) {
+    await this.buscarPorId(id); // Verificar existência
     return this.repo.delete(id);
   }
 }
+
+// Compatibilidade: aliases em inglês para não quebrar chamadas existentes
+AlertsService.prototype.create = function (data) {
+  return this.criar(data);
+};
+AlertsService.prototype.findAll = function (userId) {
+  return this.listar(userId);
+};
+AlertsService.prototype.findById = function (id) {
+  return this.buscarPorId(id);
+};
+AlertsService.prototype.update = function (id, data) {
+  return this.atualizar(id, data);
+};
+AlertsService.prototype.delete = function (id) {
+  return this.remover(id);
+};
+
+module.exports = { AlertsService };

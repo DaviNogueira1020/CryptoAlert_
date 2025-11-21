@@ -1,11 +1,17 @@
 const bcrypt = require("bcrypt");
 
-async function hashPassword(password: string): Promise<string> {
+async function hashSenha(password) {
   return bcrypt.hash(password, 10);
 }
 
-async function comparePassword(password: string, hash: string): Promise<boolean> {
+async function compararSenha(password, hash) {
   return bcrypt.compare(password, hash);
 }
 
-module.exports = { hashPassword, comparePassword };
+// Aliases legados
+module.exports = {
+  hashSenha,
+  compararSenha,
+  hashPassword: hashSenha,
+  comparePassword: compararSenha,
+};

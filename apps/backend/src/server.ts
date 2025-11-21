@@ -1,6 +1,6 @@
 const app = require("./app");
-const { default: prismaClient } = require("./lib/prisma");
-const { startAlertsJob, stopAlertsJob } = require("./jobs/alerts-checker.job");
+const prismaClient = require("./lib/prisma");
+const { iniciarJobAlertas, pararJobAlertas } = require("./jobs/alerts-checker.job");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -21,8 +21,8 @@ const startServer = async () => {
       console.log(`🔔 Alerts: http://localhost:${PORT}/alerts`);
     });
 
-    // Start alerts checker job
-    startAlertsJob(ALERTS_CHECK_INTERVAL);
+    // Iniciar job de verificação de alertas
+    iniciarJobAlertas(ALERTS_CHECK_INTERVAL);
   } catch (error) {
     console.error("❌ Failed to start server:", error);
     process.exit(1);
@@ -34,7 +34,7 @@ startServer();
 // Graceful shutdown
 process.on("SIGINT", async () => {
   console.log("\n👋 Shutting down gracefully...");
-  stopAlertsJob();
+  pararJobAlertas();
   await prismaClient.$disconnect();
   process.exit(0);
 });

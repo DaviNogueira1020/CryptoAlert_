@@ -1,7 +1,7 @@
 const repository = require("./alerts.repository");
 
 module.exports = {
-  async createAlert(userId, body) {
+  async criarAlerta(userId, body) {
     const { coin, price, direction } = body;
 
     if (!coin || !price || !direction) throw new Error("Dados incompletos");
@@ -17,12 +17,12 @@ module.exports = {
     });
   },
 
-  async listAlerts(userId) {
+  async listarAlertas(userId) {
     const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
     return repository.findByUser(uid);
   },
 
-  async updateAlert(userId, id, body) {
+  async atualizarAlerta(userId, id, body) {
     const alert = await repository.findById(id);
     const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
     if (!alert || alert.userId !== uid) throw new Error("Alerta não encontrado ou não pertence ao usuário");
@@ -36,7 +36,7 @@ module.exports = {
     return repository.update(id, data);
   },
 
-  async deleteAlert(userId, id) {
+  async deletarAlerta(userId, id) {
     const alert = await repository.findById(id);
     const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
     if (!alert || alert.userId !== uid) throw new Error("Alerta não encontrado ou não pertence ao usuário");
