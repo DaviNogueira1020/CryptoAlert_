@@ -1,44 +1,54 @@
+// Importa o serviço principal que verifica todos os alertas
 const { verificarTodosAlertas } = require("../services/alerts-checker.service");
 
-let checkInterval: NodeJS.Timeout | null = null;
+let intervaloAtivo = null;
 
 /**
- * Start the alerts checker job
- * @param {number} intervalMs - Interval in milliseconds (default: 60000 = 1 minute)
+ * Inicia o job que verifica alertas periodicamente.
+ * @param {number} intervaloMs - Tempo entre verificações (padrão: 60s)
  */
-function iniciarJobAlertas(intervalMs = 60000) {
-  if (checkInterval) {
-    console.warn("[AlertsJob] Job already running, skipping...");
+function iniciarJobAlertas(intervaloMs = 60000) {
+  if (intervaloAtivo) {
+    console.warn("[AlertsJob] O job já está rodando. Ignorando nova inicialização.");
     return;
   }
 
-  console.log(`[AlertsJob] Iniciando job de verificação de alertas (intervalo: ${intervalMs}ms)`);
+  console.log(
+    `[AlertsJob] Job iniciado. Verificando alertas a cada ${(intervaloMs / 1000)} segundos...`
+  );
 
-  // Executa imediatamente ao iniciar
-  verificarTodosAlertas().catch((err) => {
-    console.error("[AlertsJob] Falha na verificação inicial:", err);
-  });
+  // Executa uma verificação imediata
+  executarVerificacao();
 
-  // Executa periodicamente
-  checkInterval = setInterval(() => {
-    verificarTodosAlertas().catch((err) => {
-      console.error("[AlertsJob] Falha na verificação:", err);
-    });
-  }, intervalMs);
+  // Liga o loop
+  intervaloAtivo = setInterval(() => executarVerificacao(), intervaloMs);
 }
 
 /**
- * Stop the alerts checker job
+ * Executa a verificação em si com tratamento de erros.
  */
-function pararJobAlertas() {
-  if (checkInterval) {
-    clearInterval(checkInterval);
-    checkInterval = null;
-    console.log("[AlertsJob] Job de alertas parado");
-  }
+function executarVerificacao() {
+  verificarTodosAlertas().catch((erro) => {
+    console.error("[AlertsJob] Erro durante a verificação de alertas:", erro);
+  });
 }
 
-// Export em Português e aliases legados
+/**
+ * Para o job de alertas.
+ */
+function pararJobAlertas() {
+  if (!intervaloAtivo) {
+    console.warn("[AlertsJob] Não há job ativo para parar.");
+    return;
+  }
+
+  clearInterval(intervaloAtivo);
+  intervaloAtivo = null;
+
+  console.log("[AlertsJob] Job de alertas foi parado.");
+}
+
+// Exportações em PT-BR + aliases legados (backwards compatibility)
 module.exports = {
   iniciarJobAlertas,
   pararJobAlertas,

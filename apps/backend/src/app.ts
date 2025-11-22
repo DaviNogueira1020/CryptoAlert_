@@ -5,8 +5,12 @@ const healthRoutes = require("./routes/health.routes");
 const { errorHandler } = require("./middlewares/errorHandler");
 const { limiter } = require("./middlewares/rateLimit.middleware");
 const { httpLogger } = require("./utils/logger");
-// Alerts routes (module)
+
+// Alerts routes
 const alertsRoutes = require("./modules/alerts/alerts.routes");
+
+// Notifications routes (ADICIONE ESTA LINHA)
+const notificationRoutes = require("./modules/notifications/notification.routes");
 
 const app = express();
 
@@ -17,10 +21,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(limiter);
 
-// Routes
+// -------------------
+// Rotas da Aplicação
+// -------------------
 app.use("/health", healthRoutes);
 app.use("/auth", authRoutes);
 app.use("/alerts", alertsRoutes);
+
+// Rota de Notificações (ADICIONE ESTA LINHA)
+app.use("/notifications", notificationRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -31,7 +40,7 @@ app.use((req, res) => {
   });
 });
 
-// Error handler (must be last)
+// Error handler
 app.use(errorHandler);
 
 module.exports = app;
