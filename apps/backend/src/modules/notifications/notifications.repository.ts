@@ -1,27 +1,33 @@
-import { prisma } from "../../config/prisma";
+const prisma = require("../../lib/prisma");
 
-export class NotificationsRepository {
-  async create(data) {
+module.exports = {
+  create(data) {
     return prisma.notification.create({ data });
-  }
+  },
 
-  async listByUser(userId: string) {
+  findByUser(userId) {
     return prisma.notification.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
     });
-  }
+  },
 
-  async markAsRead(id: string, userId: string) {
+  findById(id) {
+    return prisma.notification.findUnique({ where: { id } });
+  },
+
+  markAsRead(id, userId) {
     return prisma.notification.updateMany({
       where: { id, userId },
       data: { read: true },
     });
-  }
+  },
 
-  async delete(id: string, userId: string) {
-    return prisma.notification.deleteMany({
-      where: { id, userId },
-    });
-  }
-}
+  delete(id) {
+    return prisma.notification.delete({ where: { id } });
+  },
+
+  deleteManyByUser(userId) {
+    return prisma.notification.deleteMany({ where: { userId } });
+  },
+};

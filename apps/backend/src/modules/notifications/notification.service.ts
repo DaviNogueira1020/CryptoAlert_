@@ -1,42 +1,45 @@
-const prisma = require("../../lib/prisma");
+const repository = require("./notifications.repository");
 
-async function create(userId, data) {
-  if (!data.crypto || !data.target || !data.direction) {
-    throw new Error("crypto, target e direction são obrigatórios");
-  }
+module.exports = {
+  async criar(userId, data) {
+    if (!data.crypto || !data.target || !data.direction) {
+      throw new Error("crypto, target e direction são obrigatórios");
+    }
 
-  if (!["above", "below"].includes(data.direction)) {
-    throw new Error("direction deve ser 'above' ou 'below'");
-  }
+    if (!["above", "below"].includes(data.direction)) {
+      throw new Error("direction deve ser 'above' ou 'below'");
+    }
 
-  return prisma.notification.create({
-    data: {
-      userId,
+    const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
+
+    return repository.create({
+      userId: uid,
       crypto: data.crypto.toUpperCase(),
       target: parseFloat(data.target),
       direction: data.direction,
-    },
-  });
-}
+    });
+  },
 
-async function list(userId) {
-  return prisma.notification.findMany({
-    where: { userId },
-    orderBy: { createdAt: "desc" },
-  });
-}
+  async listar(userId) {
+    const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
+    return repository.findByUser(uid);
+  },
 
-async function remove(userId, id) {
-  const notification = await prisma.notification.findUnique({
-    where: { id },
-  });
+  async remover(userId, id) {
+    const notification = await repository.findById(id);
+    const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
+    if (!notification) throw new Error("Notificação não encontrada");
+    if (notification.userId !== uid) throw new Error("Acesso negado");
 
-  if (!notification) throw new Error("Notificação não encontrada");
-  if (notification.userId !== userId) throw new Error("Acesso negado");
+    return repository.delete(id);
+  },
 
-  return prisma.notification.delete({
-    where: { id },
-  });
-}
+  async marcarComoLida(userId, id) {
+    const notification = await repository.findById(id);
+    const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
+    if (!notification) throw new Error("Notificação não encontrada");
+    if (notification.userId !== uid) throw new Error("Acesso negado");
 
-module.exports = { create, list, remove };
+    return repository.markAsRead(id, uid);
+  },
+};

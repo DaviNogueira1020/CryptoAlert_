@@ -5,6 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "test": "jest --runInBand",
     "build": "tsc",
     "start": "node dist/server.js",
     "prisma:generate": "prisma generate",
@@ -35,8 +36,18 @@
     "prisma": "^6.19.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"
+    ,"jest": "^29.6.4",
+    "ts-jest": "^29.1.1",
+    "@types/jest": "^29.5.3"
   },
-  "keywords": [],
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testMatch": ["**/__tests__/**/*.test.ts"],
+    "moduleFileExtensions": ["ts", "js", "json"]
+    ,"globals": {"ts-jest": {"diagnostics": false}}
+  }
+  ,"keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs"

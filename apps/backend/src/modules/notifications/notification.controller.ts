@@ -30,4 +30,14 @@ async function remover(req, res) {
   }
 }
 
-module.exports = { criar, listar, remover };
+// Marcar notificação como lida
+async function marcarComoLida(req, res) {
+  try {
+    await service.marcarComoLida(req.userId, req.params.id);
+    return res.json({ message: "Notificação marcada como lida." });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+}
+
+module.exports = { criar, listar, remover, marcarComoLida };
