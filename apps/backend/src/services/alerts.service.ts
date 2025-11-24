@@ -5,9 +5,32 @@ class AlertsService {
     this.repo = new AlertsRepository();
   }
 
+  /**
+   * Criar Alerta
+   */
   async criar(data) {
-    // Validar campos de entrada
-    if (!data.crypto || !data.targetPrice || !data.direction) {
+    const {
+      userId,
+      crypto,
+      baseCurrency = "USDT",
+      targetPrice,
+      direction,
+
+      // novos campos
+      isFavorite = false,
+      isActive = true,
+      notifyOnce = true,
+      initialPrice = null,
+      title = null,
+      notes = null,
+      cooldown = null,
+      scheduledAt = null,
+      isScheduled = false,
+      searchKey,
+    } = data;
+
+    // validações básicas
+    if (!crypto || !targetPrice || !direction) {
       throw {
         status: 400,
         message: "Campos obrigatórios ausentes: crypto, targetPrice, direction",
@@ -15,7 +38,7 @@ class AlertsService {
       };
     }
 
-    if (!["above", "below"].includes(data.direction)) {
+    if (!["above", "below"].includes(direction)) {
       throw {
         status: 400,
         message: 'Direction deve ser "above" ou "below"',
@@ -23,15 +46,48 @@ class AlertsService {
       };
     }
 
-    return this.repo.create(data);
+    // search key automática caso não venha nada
+    const finalSearchKey =
+      searchKey ??
+      `${crypto} ${crypto.toUpperCase()} ${crypto.toLowerCase()}`;
+
+    return this.repo.create({
+      userId,
+      crypto,
+      baseCurrency,
+      targetPrice,
+      direction,
+
+      // novos campos
+      isFavorite,
+      isActive,
+      notifyOnce,
+      initialPrice,
+      title,
+      notes,
+      cooldown,
+      scheduledAt,
+      isScheduled,
+      searchKey: finalSearchKey,
+
+      // metadata
+      lastTriggeredAt: null,
+    });
   }
 
+  /**
+   * Listar alertas
+   */
   async listar(userId) {
     return this.repo.findAll(userId);
   }
 
+  /**
+   * Buscar por ID
+   */
   async buscarPorId(id) {
     const alert = await this.repo.findById(id);
+
     if (!alert) {
       throw {
         status: 404,
@@ -39,21 +95,28 @@ class AlertsService {
         code: "NOT_FOUND",
       };
     }
+
     return alert;
   }
 
+  /**
+   * Atualizar
+   */
   async atualizar(id, data) {
-    await this.buscarPorId(id); // Verificar existência
+    await this.buscarPorId(id); // verifica existência
     return this.repo.update(id, data);
   }
 
+  /**
+   * Remover
+   */
   async remover(id) {
-    await this.buscarPorId(id); // Verificar existência
+    await this.buscarPorId(id); // verifica existência
     return this.repo.delete(id);
   }
 }
 
-// Compatibilidade: aliases em inglês para não quebrar chamadas existentes
+// aliases legados (não quebrar o front)
 AlertsService.prototype.create = function (data) {
   return this.criar(data);
 };

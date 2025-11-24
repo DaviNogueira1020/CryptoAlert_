@@ -1,81 +1,63 @@
-const { AlertsService } = require("../services/alerts.service");
+async criar(req, res) {
+  try {
+    const {
+      userId,
+      crypto,
+      baseCurrency,
+      targetPrice,
+      direction,
 
-const service = new AlertsService();
+      // opcionais
+      isFavorite,
+      isActive,
+      notifyOnce,
+      initialPrice,
+      title,
+      notes,
+      cooldown,
+      scheduledAt,
+      isScheduled,
+      searchKey,
+    } = req.body;
 
-class AlertsController {
-  async criar(req, res) {
-    try {
-      const { userId, crypto, targetPrice, direction } = req.body;
-
-      const newAlert = await service.criar({
-        userId: Number(userId),
-        crypto,
-        targetPrice: Number(targetPrice),
-        direction,
+    // Validação do mínimo necessário
+    if (!userId || !crypto || !targetPrice || !direction) {
+      return res.status(400).json({
+        error: "Campos obrigatórios ausentes",
+        required: ["userId", "crypto", "targetPrice", "direction"],
       });
-
-      return res.status(201).json(newAlert);
-    } catch (err) {
-      return res.status(err.status || 500).json({
-        error: err.message || "Erro interno do servidor",
-        code: err.code || "INTERNAL_ERROR",
-      });
     }
-  }
 
-  async listar(req, res) {
-    try {
-      const userId = req.query.userId ? Number(req.query.userId) : undefined;
-      const alerts = await service.listar(userId);
-      return res.json(alerts);
-    } catch (err) {
-      return res.status(500).json({ error: "Falha ao buscar alertas" });
-    }
-  }
+    const novoAlerta = await service.criar({
+      // obrigatórios
+      userId: Number(userId),
+      crypto,
+      baseCurrency: baseCurrency ?? "USDT",
+      targetPrice: Number(targetPrice),
+      direction,
 
-  async buscarPorId(req, res) {
-    try {
-      const alert = await service.buscarPorId(req.params.id);
-      return res.json(alert);
-    } catch (err) {
-      return res.status(err.status || 500).json({ error: err.message });
-    }
-  }
+      // opcionais com defaults
+      isFavorite: isFavorite ?? false,
+      isActive: isActive ?? true,
+      notifyOnce: notifyOnce ?? true,
+      initialPrice: initialPrice ?? null,
+      title: title ?? null,
+      notes: notes ?? null,
+      cooldown: cooldown ?? null,
+      scheduledAt: scheduledAt ?? null,
+      isScheduled: isScheduled ?? false,
 
-  async atualizar(req, res) {
-    try {
-      const updated = await service.atualizar(req.params.id, req.body);
-      return res.json(updated);
-    } catch (err) {
-      return res.status(err.status || 500).json({ error: err.message });
-    }
-  }
+      // gerado automaticamente se não vier
+      searchKey:
+        searchKey ??
+        `${crypto} ${crypto.toLowerCase()} ${crypto.toUpperCase()}`,
+    });
 
-  async remover(req, res) {
-    try {
-      const deleted = await service.remover(req.params.id);
-      return res.json({ message: "Alerta removido com sucesso", data: deleted });
-    } catch (err) {
-      return res.status(err.status || 500).json({ error: err.message });
-    }
+    return res.status(201).json(novoAlerta);
+  } catch (err) {
+    return res.status(err.status || 500).json({
+      error: err.message || "Erro interno do servidor",
+      code: err.code || "INTERNAL_ERROR",
+    });
   }
 }
-
-// Compatibilidade: aliases legados para a API existente
-AlertsController.prototype.create = function (req, res) {
-  return this.criar(req, res);
-};
-AlertsController.prototype.findAll = function (req, res) {
-  return this.listar(req, res);
-};
-AlertsController.prototype.findById = function (req, res) {
-  return this.buscarPorId(req, res);
-};
-AlertsController.prototype.update = function (req, res) {
-  return this.atualizar(req, res);
-};
-AlertsController.prototype.delete = function (req, res) {
-  return this.remover(req, res);
-};
-
-module.exports = { AlertsController };
