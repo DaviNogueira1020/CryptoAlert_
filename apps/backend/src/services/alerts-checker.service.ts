@@ -65,8 +65,12 @@ export function checarCondicaoAlerta(alerta, precoAtual) {
  */
 async function criarNotificacao(alerta, precoAtual) {
   try {
+    // Envia um payload rico para o serviço de notifications — o service decidirá quais campos persistir
     await notifications.createNotification({
       userId: alerta.userId,
+      crypto: alerta.crypto,
+      target: alerta.targetPrice,
+      direction: alerta.direction,
       title: `Alerta disparado: ${alerta.crypto}`,
       message: `O preço atingiu ${precoAtual} (${alerta.direction} ${alerta.targetPrice})`,
       type: "alert",
