@@ -44,6 +44,14 @@ module.exports = {
   deleteManyByUser(userId) {
     return prisma.notification.deleteMany({ where: { userId } });
   },
+  
+    deleteReadByUser(userId) {
+      return prisma.notification.deleteMany({ where: { userId, read: true } });
+    },
+  
+    deleteOlderThan(userId, beforeDate) {
+      return prisma.notification.deleteMany({ where: { userId, createdAt: { lt: beforeDate } } });
+    },
 
   countByUser(userId, filters = {}) {
     const where = { userId };

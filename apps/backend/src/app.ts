@@ -6,6 +6,10 @@ const { errorHandler } = require("./middlewares/errorHandler");
 const { limiter } = require("./middlewares/rateLimit.middleware");
 const { httpLogger } = require("./utils/logger");
 
+// Swagger
+const swaggerUi = require("swagger-ui-express");
+const openapi = require("../docs/openapi.json");
+
 // Alerts routes
 const alertsRoutes = require("./modules/alerts/alerts.routes");
 
@@ -30,6 +34,9 @@ app.use("/alerts", alertsRoutes);
 
 // Rota de Notificações (ADICIONE ESTA LINHA)
 app.use("/notifications", notificationRoutes);
+
+// Swagger UI
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapi));
 
 // 404 handler
 app.use((req, res) => {

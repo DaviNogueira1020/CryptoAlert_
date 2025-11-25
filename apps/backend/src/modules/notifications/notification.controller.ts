@@ -57,4 +57,24 @@ async function apagarTodas(req, res) {
   }
 }
 
+async function removerLidas(req, res) {
+  try {
+    await service.removerLidas(req.userId);
+    return res.json({ success: true, data: { message: "Notificações lidas removidas." } });
+  } catch (error) {
+    return res.status(400).json({ success: false, error: error.message });
+  }
+}
+
+async function removerAntigas(req, res) {
+  try {
+    const days = req.query.days ? Number(req.query.days) : 30;
+    await service.removerAntigas(req.userId, days);
+    return res.json({ success: true, data: { message: `Notificações anteriores a ${days} dias removidas.` } });
+  } catch (error) {
+    return res.status(400).json({ success: false, error: error.message });
+  }
+}
+
 module.exports = { criar, listar, remover, marcarComoLida, apagarTodas };
+

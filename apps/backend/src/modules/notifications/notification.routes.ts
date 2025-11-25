@@ -30,6 +30,16 @@ router.delete("/remover/todas", authMiddleware, (req, res) =>
   controller.apagarTodas(req, res)
 );
 
+// Remover somente notificações lidas
+router.delete("/remover/lidas", authMiddleware, (req, res) =>
+  controller.removerLidas(req, res)
+);
+
+// Remover notificações antigas (dias via query `days`, default 30)
+router.delete("/remover/antigas", authMiddleware, (req, res) =>
+  controller.removerAntigas(req, res)
+);
+
 // Marcar notificação como lida
 router.put("/marcar-lida/:id", authMiddleware, (req, res) =>
   controller.marcarComoLida(req, res)

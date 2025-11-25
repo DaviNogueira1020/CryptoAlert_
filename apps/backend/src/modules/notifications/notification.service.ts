@@ -49,4 +49,16 @@ module.exports = {
     const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
     return repository.deleteManyByUser(uid);
   },
+
+  async removerLidas(userId) {
+    const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
+    return repository.deleteReadByUser(uid);
+  },
+
+  async removerAntigas(userId, days) {
+    const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
+    const d = Number(days) || 30;
+    const before = new Date(Date.now() - d * 24 * 60 * 60 * 1000);
+    return repository.deleteOlderThan(uid, before);
+  },
 };

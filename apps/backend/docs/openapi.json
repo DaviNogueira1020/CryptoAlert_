@@ -1,0 +1,22 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CriptoAlert API",
+    "version": "1.0.0",
+    "description": "API para gerenciamento de alerts e notifications"
+  },
+  "paths": {
+    "/alerts": {
+      "post": {
+        "summary": "Criar alerta",
+        "requestBody": { "content": { "application/json": { "schema": { "type": "object" } } } },
+        "responses": { "201": { "description": "Alerta criado" } }
+      },
+      "get": { "summary": "Listar alertas", "responses": { "200": { "description": "Lista" } } }
+    },
+    "/notifications": {
+      "get": { "summary": "Listar notificações", "responses": { "200": { "description": "Lista" } } },
+      "post": { "summary": "Criar notificação", "responses": { "201": { "description": "Criado" } } }
+    }
+  }
+}

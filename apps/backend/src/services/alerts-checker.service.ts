@@ -1,6 +1,7 @@
 import prisma from "../lib/prisma";
 import { NotificationsService } from "./notifications.service";
 import { obterPrecos } from "./binance.service";
+const { logInfo, logWarn, logError } = require("../utils/logger");
 
 const notifications = new NotificationsService();
 
@@ -17,7 +18,7 @@ export async function verificarTodosAlertas() {
     });
 
     if (alertas.length === 0) {
-      console.log("[AlertsChecker] Nenhum alerta ativo");
+      logInfo("[AlertsChecker] Nenhum alerta ativo");
       return;
     }
 
@@ -37,15 +38,17 @@ export async function verificarTodosAlertas() {
         try {
           await prisma.alert.update({ where: { id: alerta.id }, data: { initialPrice: precoAtual } });
         } catch (e) {
-          console.warn(`[AlertsChecker] Falha ao setar initialPrice para ${alerta.id}:`, e);
+          logWarn(`[AlertsChecker] Falha ao setar initialPrice para ${alerta.id}: ${e.message}`);
         }
       }
 
-      // Respeitar cooldown: se lastTriggeredAt for recente (< cooldown em segundos), pula
-      if (alerta.lastTriggeredAt && alerta.cooldown) {
+      // Determine cooldown in seconds: prefer cooldownMinutes if available
+      const cooldownSeconds = alerta.cooldownMinutes != null ? Number(alerta.cooldownMinutes) * 60 : (alerta.cooldown ? Number(alerta.cooldown) : 0);
+
+      // Respeitar cooldown: se lastTriggeredAt for recente (< cooldownSeconds), pula
+      if (alerta.lastTriggeredAt && cooldownSeconds) {
         const elapsedMs = Date.now() - new Date(alerta.lastTriggeredAt).getTime();
-        if (elapsedMs < alerta.cooldown * 1000) {
-          // console.log(`[AlertsChecker] Pulando ${alerta.id} por cooldown`);
+        if (elapsedMs < cooldownSeconds * 1000) {
           continue;
         }
       }
@@ -58,7 +61,7 @@ export async function verificarTodosAlertas() {
       const condicaoAtendida = checarCondicaoAlerta(alerta, precoAtual);
 
       if (condicaoAtendida) {
-        console.log(`[AlertsChecker] Alerta disparado para ${alerta.crypto}`);
+        logInfo(`[AlertsChecker] Alerta disparado para ${alerta.crypto}`);
 
         await criarNotificacao(alerta, precoAtual);
 
@@ -72,7 +75,7 @@ export async function verificarTodosAlertas() {
             },
           });
         } catch (e) {
-          console.error(`[AlertsChecker] Falha ao atualizar alerta ${alerta.id}:`, e);
+          logError(`[AlertsChecker] Falha ao atualizar alerta ${alerta.id}: ${e.message}`, e);
         }
       }
     }

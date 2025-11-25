@@ -42,16 +42,18 @@ function executarVerificacao() {
         return;
       } catch (erro) {
         consecutiveErrors++;
-        console.error(`[AlertsJob] Erro na verificação de alertas (attempt ${attempt}):`, erro);
+        const { logError, logInfo } = require("../utils/logger");
+        logError(`[AlertsJob] Erro na verificação de alertas (attempt ${attempt}):`, erro);
         if (attempt < RETRY_ATTEMPTS) {
-          console.log(`[AlertsJob] Retry em ${RETRY_DELAY_MS}ms`);
+          logInfo(`[AlertsJob] Retry em ${RETRY_DELAY_MS}ms`);
           await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
         }
       }
     }
 
     if (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
-      console.error(`[AlertsJob] Número máximo de erros consecutivos atingido (${consecutiveErrors}). Parando o job para investigação.`);
+      const { logError } = require("../utils/logger");
+      logError(`[AlertsJob] Número máximo de erros consecutivos atingido (${consecutiveErrors}). Parando o job para investigação.`, new Error("Max consecutive errors"));
       if (intervaloAtivo) {
         clearInterval(intervaloAtivo);
         intervaloAtivo = null;
