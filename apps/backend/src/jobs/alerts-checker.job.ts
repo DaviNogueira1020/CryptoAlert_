@@ -2,6 +2,10 @@
 const { verificarTodosAlertas } = require("../services/alerts-checker.service");
 
 let intervaloAtivo = null;
+let consecutiveErrors = 0;
+const MAX_CONSECUTIVE_ERRORS = Number(process.env.ALERTS_MAX_CONSECUTIVE_ERRORS || 5);
+const RETRY_ATTEMPTS = Number(process.env.ALERTS_RETRY_ATTEMPTS || 2);
+const RETRY_DELAY_MS = Number(process.env.ALERTS_RETRY_DELAY_MS || 2000);
 
 /**
  * Inicia o job que verifica alertas periodicamente.
@@ -28,9 +32,32 @@ function iniciarJobAlertas(intervaloMs = 60000) {
  * Executa a verificação em si com tratamento de erros.
  */
 function executarVerificacao() {
-  verificarTodosAlertas().catch((erro) => {
-    console.error("[AlertsJob] Erro durante a verificação de alertas:", erro);
-  });
+  // tenta com retries simples
+  (async () => {
+    for (let attempt = 0; attempt <= RETRY_ATTEMPTS; attempt++) {
+      try {
+        await verificarTodosAlertas();
+        // sucesso -> reset contador de erros
+        consecutiveErrors = 0;
+        return;
+      } catch (erro) {
+        consecutiveErrors++;
+        console.error(`[AlertsJob] Erro na verificação de alertas (attempt ${attempt}):`, erro);
+        if (attempt < RETRY_ATTEMPTS) {
+          console.log(`[AlertsJob] Retry em ${RETRY_DELAY_MS}ms`);
+          await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+        }
+      }
+    }
+
+    if (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
+      console.error(`[AlertsJob] Número máximo de erros consecutivos atingido (${consecutiveErrors}). Parando o job para investigação.`);
+      if (intervaloAtivo) {
+        clearInterval(intervaloAtivo);
+        intervaloAtivo = null;
+      }
+    }
+  })();
 }
 
 /**
