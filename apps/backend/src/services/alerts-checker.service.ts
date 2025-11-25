@@ -32,6 +32,29 @@ export async function verificarTodosAlertas() {
         continue;
       }
 
+      // Atualiza initialPrice caso ainda não exista
+      if (alerta.initialPrice == null) {
+        try {
+          await prisma.alert.update({ where: { id: alerta.id }, data: { initialPrice: precoAtual } });
+        } catch (e) {
+          console.warn(`[AlertsChecker] Falha ao setar initialPrice para ${alerta.id}:`, e);
+        }
+      }
+
+      // Respeitar cooldown: se lastTriggeredAt for recente (< cooldown em segundos), pula
+      if (alerta.lastTriggeredAt && alerta.cooldown) {
+        const elapsedMs = Date.now() - new Date(alerta.lastTriggeredAt).getTime();
+        if (elapsedMs < alerta.cooldown * 1000) {
+          // console.log(`[AlertsChecker] Pulando ${alerta.id} por cooldown`);
+          continue;
+        }
+      }
+
+      // Se notifyOnce e já foi disparado antes, pular
+      if (alerta.notifyOnce && alerta.lastTriggeredAt) {
+        continue;
+      }
+
       const condicaoAtendida = checarCondicaoAlerta(alerta, precoAtual);
 
       if (condicaoAtendida) {
@@ -39,11 +62,18 @@ export async function verificarTodosAlertas() {
 
         await criarNotificacao(alerta, precoAtual);
 
-        // desativar se desejar
-        // await prisma.alert.update({
-        //   where: { id: alerta.id },
-        //   data: { isActive: false },
-        // });
+        // Atualiza lastTriggeredAt e desativa se notifyOnce
+        try {
+          await prisma.alert.update({
+            where: { id: alerta.id },
+            data: {
+              lastTriggeredAt: new Date(),
+              isActive: alerta.notifyOnce ? false : alerta.isActive,
+            },
+          });
+        } catch (e) {
+          console.error(`[AlertsChecker] Falha ao atualizar alerta ${alerta.id}:`, e);
+        }
       }
     }
   } catch (err) {

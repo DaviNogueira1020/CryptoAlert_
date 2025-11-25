@@ -22,7 +22,9 @@ module.exports = {
 
   async listar(userId) {
     const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
-    return repository.findByUser(uid);
+    // accept optional options object as second param (pagination/filters)
+    const options = arguments[1] || {};
+    return repository.findByUser(uid, options);
   },
 
   async remover(userId, id) {
@@ -41,5 +43,10 @@ module.exports = {
     if (notification.userId !== uid) throw new Error("Acesso negado");
 
     return repository.markAsRead(id, uid);
+  },
+
+  async removerTodas(userId) {
+    const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
+    return repository.deleteManyByUser(uid);
   },
 };

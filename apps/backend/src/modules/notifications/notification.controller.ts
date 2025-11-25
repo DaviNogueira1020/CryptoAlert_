@@ -13,10 +13,17 @@ async function criar(req, res) {
 // Listar notificações do usuário
 async function listar(req, res) {
   try {
-    const result = await service.listar(req.userId);
-    return res.json(result);
+    const options = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+      unreadOnly: req.query.unread === "true",
+      crypto: req.query.crypto,
+    };
+
+    const result = await service.listar(req.userId, options);
+    return res.json({ success: true, data: result });
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json({ success: false, error: error.message });
   }
 }
 
@@ -24,9 +31,9 @@ async function listar(req, res) {
 async function remover(req, res) {
   try {
     await service.remover(req.userId, req.params.id);
-    return res.json({ message: "Notificação removida com sucesso." });
+    return res.json({ success: true, data: { message: "Notificação removida com sucesso." } });
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json({ success: false, error: error.message });
   }
 }
 
@@ -34,10 +41,20 @@ async function remover(req, res) {
 async function marcarComoLida(req, res) {
   try {
     await service.marcarComoLida(req.userId, req.params.id);
-    return res.json({ message: "Notificação marcada como lida." });
+    return res.json({ success: true, data: { message: "Notificação marcada como lida." } });
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json({ success: false, error: error.message });
   }
 }
 
-module.exports = { criar, listar, remover, marcarComoLida };
+// Apagar todas notificações do usuário
+async function apagarTodas(req, res) {
+  try {
+    await service.removerTodas(req.userId);
+    return res.json({ success: true, data: { message: "Todas notificações removidas." } });
+  } catch (error) {
+    return res.status(400).json({ success: false, error: error.message });
+  }
+}
+
+module.exports = { criar, listar, remover, marcarComoLida, apagarTodas };

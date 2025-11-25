@@ -1,7 +1,7 @@
 // src/scheduler/alerts.scheduler.ts
 
 const cron = require("node-cron");
-const { verificarTodosAlertas } = require("../modules/alerts/alerts-checker.service");
+const { verificarTodosAlertas } = require("../services/alerts-checker.service");
 const logger = require("../utils/logger");
 
 /**

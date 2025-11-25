@@ -26,3 +26,36 @@ model Alert {
   @@index([userId])
   @@index([crypto])
 }
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  crypto    String
+  target    Float
+  direction AlertDirection
+
+  title     String?
+  message   String?
+  type      NotificationType @default(alert)
+  read      Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([crypto])
+}
+
+enum NotificationType {
+  system
+  alert
+  security
+  info
+}
+
+enum AlertDirection {
+  above
+  below
+}

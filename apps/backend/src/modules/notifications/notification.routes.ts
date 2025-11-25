@@ -25,6 +25,11 @@ router.delete("/remover/:id", authMiddleware, (req, res) =>
   controller.remover(req, res)
 );
 
+// Remover todas as notificações do usuário
+router.delete("/remover/todas", authMiddleware, (req, res) =>
+  controller.apagarTodas(req, res)
+);
+
 // Marcar notificação como lida
 router.put("/marcar-lida/:id", authMiddleware, (req, res) =>
   controller.marcarComoLida(req, res)
