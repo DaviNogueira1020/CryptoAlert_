@@ -17,6 +17,17 @@
     "/notifications": {
       "get": { "summary": "Listar notificações", "responses": { "200": { "description": "Lista" } } },
       "post": { "summary": "Criar notificação", "responses": { "201": { "description": "Criado" } } }
+    },
+    "/users": {
+      "post": {
+        "summary": "Criar usuário",
+        "requestBody": { "content": { "application/json": { "schema": { "type": "object" } } } },
+        "responses": { "201": { "description": "Usuário criado" } }
+      },
+      "get": { "summary": "Listar usuários", "responses": { "200": { "description": "Lista" } } }
+    },
+    "/alerts-with-user": {
+      "get": { "summary": "Listar alertas com include user", "responses": { "200": { "description": "Lista com usuário incluído" } } }
     }
   }
 }

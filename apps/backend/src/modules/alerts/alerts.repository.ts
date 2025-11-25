@@ -31,6 +31,7 @@ module.exports = {
     return prisma.alert.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
+      include: { user: true },
     });
   },
 

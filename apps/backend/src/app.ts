@@ -15,6 +15,8 @@ const alertsRoutes = require("./modules/alerts/alerts.routes");
 
 // Notifications routes (ADICIONE ESTA LINHA)
 const notificationRoutes = require("./modules/notifications/notification.routes");
+// Users
+const usersRoutes = require("./modules/users/users.routes");
 
 const app = express();
 
@@ -34,6 +36,8 @@ app.use("/alerts", alertsRoutes);
 
 // Rota de Notificações (ADICIONE ESTA LINHA)
 app.use("/notifications", notificationRoutes);
+// Rotas de Usuários
+app.use("/users", usersRoutes);
 
 // Swagger UI
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapi));

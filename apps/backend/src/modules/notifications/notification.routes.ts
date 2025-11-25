@@ -14,8 +14,15 @@ const { authMiddleware } = require("../../middlewares/auth.middleware");
 
 const router = Router();
 
+const { createNotificationSchema } = require("./notifications.validator");
+
 // Criar notificação
-router.post("/criar", authMiddleware, (req, res) => controller.criar(req, res));
+router.post("/criar", authMiddleware, (req, res) => {
+  const parsed = createNotificationSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ success: false, error: { code: "VALIDATION_ERROR", message: parsed.error.errors } });
+  req.body = parsed.data;
+  return controller.criar(req, res);
+});
 
 // Listar notificações do usuário logado
 router.get("/listar", authMiddleware, (req, res) => controller.listar(req, res));

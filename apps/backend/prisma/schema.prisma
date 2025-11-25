@@ -1,3 +1,23 @@
+﻿generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  alerts    Alert[]
+  notifications Notification[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Alert {
   id              String         @id @default(uuid())
   userId          Int
@@ -19,9 +39,10 @@ model Alert {
   notes           String?        // Texto opcional do usuário
 
   cooldown        Int?           // em segundos (60, 300, 3600...)
+  cooldownMinutes Int?           // minutos de cooldown (nova coluna)
 
   createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  updatedAt       DateTime @updatedAt
 
   @@index([userId])
   @@index([crypto])
