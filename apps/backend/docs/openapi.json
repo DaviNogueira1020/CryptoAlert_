@@ -6,28 +6,99 @@
     "description": "API para gerenciamento de alerts e notifications"
   },
   "paths": {
+    "/auth/register": {
+      "post": {
+        "security": [],
+        "summary": "Registrar novo usuário",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AuthRegister" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Usuário criado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StandardResponse" } } } },
+          "400": { "description": "Erro de validação" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "security": [],
+        "summary": "Login",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthLogin" } } } },
+        "responses": { "200": { "description": "Token", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StandardResponse" } } } } }
+      }
+    },
     "/alerts": {
       "post": {
         "summary": "Criar alerta",
-        "requestBody": { "content": { "application/json": { "schema": { "type": "object" } } } },
-        "responses": { "201": { "description": "Alerta criado" } }
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AlertCreate" } } } },
+        "responses": { "201": { "description": "Alerta criado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StandardResponse" } } } } }
       },
-      "get": { "summary": "Listar alertas", "responses": { "200": { "description": "Lista" } } }
+      "get": { "summary": "Listar alertas (com paginação)", "responses": { "200": { "description": "Lista de alertas", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AlertListResponse" } } } } } }
+    },
+    "/alerts/{id}": {
+      "put": { "summary": "Atualizar alerta", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AlertUpdate" } } } }, "responses": { "200": { "description": "Alerta atualizado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StandardResponse" } } } } } },
+      "delete": { "summary": "Remover alerta", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }], "responses": { "200": { "description": "Alerta removido" } } }
     },
     "/notifications": {
-      "get": { "summary": "Listar notificações", "responses": { "200": { "description": "Lista" } } },
-      "post": { "summary": "Criar notificação", "responses": { "201": { "description": "Criado" } } }
+      "post": { "summary": "Criar notificação", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/NotificationCreate" } } } }, "responses": { "201": { "description": "Criado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StandardResponse" } } } } } },
+      "get": { "summary": "Listar notificações do usuário (com paginação)", "responses": { "200": { "description": "Lista", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/NotificationListResponse" } } } } } }
     },
+    "/notifications/{id}/mark-read": { "put": { "summary": "Marcar notificação como lida", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }], "responses": { "200": { "description": "Marcado como lido" } } } },
     "/users": {
-      "post": {
-        "summary": "Criar usuário",
-        "requestBody": { "content": { "application/json": { "schema": { "type": "object" } } } },
-        "responses": { "201": { "description": "Usuário criado" } }
-      },
-      "get": { "summary": "Listar usuários", "responses": { "200": { "description": "Lista" } } }
+      "post": { "summary": "Criar usuário", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserCreate" } } } }, "responses": { "201": { "description": "Usuário criado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StandardResponse" } } } } } },
+      "get": { "summary": "Listar usuários", "responses": { "200": { "description": "Lista de usuários", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserListResponse" } } } } } }
     },
-    "/alerts-with-user": {
-      "get": { "summary": "Listar alertas com include user", "responses": { "200": { "description": "Lista com usuário incluído" } } }
+    "/users/{id}": { "get": { "summary": "Obter usuário por id", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }], "responses": { "200": { "description": "Usuário", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StandardResponse" } } } } } },
+      "put": { "summary": "Atualizar usuário", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserUpdate" } } } }, "responses": { "200": { "description": "Atualizado" } } },
+      "delete": { "summary": "Remover usuário", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }], "responses": { "200": { "description": "Removido" } } }
     }
-  }
+  },
+  "components": {
+    "schemas": {
+      "StandardResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "data": { "type": ["object", "array", "null"] },
+          "error": { "type": ["object", "null"] }
+        }
+      },
+      "AuthRegister": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" },
+          "name": { "type": "string" }
+        },
+        "required": ["email", "password"],
+        "example": { "email": "user@example.com", "password": "senha123", "name": "Nome Exemplo" }
+      },
+      "AuthLogin": { "type": "object", "properties": { "email": { "type": "string" }, "password": { "type": "string" } }, "required": ["email", "password"] },
+      "UserCreate": { "$ref": "#/components/schemas/AuthRegister" },
+      "UserUpdate": { "type": "object", "properties": { "email": { "type": "string" }, "name": { "type": "string" } } },
+      "UserListResponse": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "array", "items": { "$ref": "#/components/schemas/User" } } } },
+      "User": { "type": "object", "properties": { "id": { "type": "integer" }, "email": { "type": "string" }, "name": { "type": "string" }, "createdAt": { "type": "string", "format": "date-time" } } },
+      "AlertCreate": { "type": "object", "properties": { "crypto": { "type": "string" }, "baseCurrency": { "type": "string" }, "targetPrice": { "type": "number" }, "direction": { "type": "string", "enum": ["above","below"] }, "notifyOnce": { "type": "boolean" }, "cooldownMinutes": { "type": "integer" }, "title": { "type": "string" }, "notes": { "type": "string" } }, "required": ["crypto","targetPrice","direction"], "example": { "crypto": "BTC", "baseCurrency": "USD", "targetPrice": 50000, "direction": "above", "notifyOnce": true, "cooldownMinutes": 60 } },
+      "AlertUpdate": { "$ref": "#/components/schemas/AlertCreate" },
+      "Alert": { "type": "object", "properties": { "id": { "type": "integer" }, "crypto": { "type": "string" }, "targetPrice": { "type": "number" }, "direction": { "type": "string" }, "userId": { "type": "integer" }, "createdAt": { "type": "string", "format": "date-time" } } },
+      "AlertListResponse": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "array", "items": { "$ref": "#/components/schemas/AlertWithUser" } } } },
+      "AlertWithUser": { "allOf": [{ "$ref": "#/components/schemas/Alert" }, { "type": "object", "properties": { "user": { "$ref": "#/components/schemas/User" } } }] },
+      "NotificationCreate": { "type": "object", "properties": { "crypto": { "type": "string" }, "target": { "type": "number" }, "direction": { "type": "string", "enum": ["above","below"] }, "title": { "type": "string" }, "message": { "type": "string" }, "type": { "type": "string", "enum": ["system","alert","security","info"] } }, "required": ["crypto","target","direction"] },
+      "Notification": { "type": "object", "properties": { "id": { "type": "integer" }, "userId": { "type": "integer" }, "crypto": { "type": "string" }, "target": { "type": "number" }, "direction": { "type": "string" }, "title": { "type": "string" }, "message": { "type": "string" }, "isRead": { "type": "boolean" }, "createdAt": { "type": "string", "format": "date-time" } } },
+      "NotificationListResponse": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "array", "items": { "$ref": "#/components/schemas/Notification" } } } }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [{ "bearerAuth": [] }]
 }

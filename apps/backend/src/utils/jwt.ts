@@ -1,21 +1,17 @@
+export {};
 const jwt = require("jsonwebtoken");
 
-function gerarTokenJwt(userId) {
-  const secret = process.env.JWT_SECRET || "seu_jwt_secret";
-  return jwt.sign({ id: userId }, secret, {
-    expiresIn: process.env.JWT_EXPIRES_IN || "7d",
-  });
+export function gerarTokenJwt(userId: any) {
+  return jwt.sign({ userId }, process.env.JWT_SECRET || "default", { expiresIn: process.env.JWT_EXPIRES_IN || "7d" });
 }
 
-function verificarTokenJwt(token) {
-  const secret = process.env.JWT_SECRET || "seu_jwt_secret";
-  return jwt.verify(token, secret);
+export function verificarTokenJwt(token: any) {
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET || "default");
+  } catch (error) {
+    return null;
+  }
 }
 
-// Aliases legados para compatibilidade
-module.exports = {
-  gerarTokenJwt,
-  verificarTokenJwt,
-  generateJwtToken: gerarTokenJwt,
-  verifyJwtToken: verificarTokenJwt,
-};
+// Aliases legados para compatibilidade CommonJS
+module.exports = { gerarTokenJwt, verificarTokenJwt, generateJwtToken: gerarTokenJwt, verifyJwtToken: verificarTokenJwt };

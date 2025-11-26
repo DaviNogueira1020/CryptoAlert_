@@ -1,27 +1,23 @@
-const morgan = require("morgan");
-const { env } = require("../config/env");
+import morgan from "morgan";
+import { env } from "../config/env";
 
 // Logger para requisições HTTP
-const httpLogger = morgan(
-  env.NODE_ENV === "production" ? "combined" : "dev"
-);
+export const httpLogger = morgan(env.NODE_ENV === "production" ? "combined" : "dev");
 
 // Logger customizado
-function log(level, message, data = {}) {
+export function log(level: string, message: string, data: any = {}) {
   const timestamp = new Date().toISOString();
   console.log(`[${timestamp}] [${level}] ${message}`, data);
 }
 
-function logError(message, error) {
-  log("ERROR", message, { error: error.message, stack: error.stack });
+export function logError(message: string, error: Error) {
+  log("ERROR", message, { error: error.message, stack: (error as any).stack });
 }
 
-function logInfo(message, data) {
+export function logInfo(message: string, data: any) {
   log("INFO", message, data);
 }
 
-function logWarn(message, data) {
+export function logWarn(message: string, data: any) {
   log("WARN", message, data);
 }
-
-module.exports = { httpLogger, log, logError, logInfo, logWarn };

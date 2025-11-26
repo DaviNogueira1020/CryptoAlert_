@@ -1,6 +1,13 @@
+export {};
 const { AlertsRepository } = require("../repositories/alerts.repository");
 
 class AlertsService {
+  repo: any;
+  create: any;
+  findAll: any;
+  findById: any;
+  update: any;
+  delete: any;
   constructor() {
     this.repo = new AlertsRepository();
   }

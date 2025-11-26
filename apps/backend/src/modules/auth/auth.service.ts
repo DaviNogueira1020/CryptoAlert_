@@ -1,6 +1,6 @@
-const prisma = require("../../lib/prisma");
-const { hashSenha, compararSenha } = require("../../utils/hash");
-const { gerarTokenJwt } = require("../../utils/jwt");
+import prisma from "../../lib/prisma";
+import { hashSenha, compararSenha } from "../../utils/hash";
+import { gerarTokenJwt } from "../../utils/jwt";
 
 async function register(data) {
   if (!data.email || !data.password) {

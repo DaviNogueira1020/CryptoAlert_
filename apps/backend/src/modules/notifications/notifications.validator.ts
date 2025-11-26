@@ -1,3 +1,4 @@
+export {};
 const { z } = require("zod");
 
 const createNotificationSchema = z.object({

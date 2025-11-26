@@ -1,37 +1,45 @@
-const { Request, Response } = require("express");
-const { AuthService } = require("../services/auth.service");
+import AuthService from "../services/auth.service";
+import { sendSuccess, sendError } from "../utils/response";
 
-class AuthController {
+export default class AuthController {
+  authService: any;
   constructor() {
     this.authService = new AuthService();
   }
 
-  register = async (req, res) => {
+  register = async (req: any, res: any, next?: any) => {
     try {
       const result = await this.authService.register(req.body);
-      return res.status(201).json(result);
-    } catch (error) {
-      return res.status(400).json({ error: error.message });
+      return sendSuccess(res, result, 201);
+    } catch (error: any) {
+      return sendError(res, "VALIDATION_ERROR", error.message, 400);
     }
   };
 
-  login = async (req, res) => {
+  login = async (req: any, res: any, next?: any) => {
     try {
       const result = await this.authService.login(req.body);
-      return res.status(200).json(result);
-    } catch (error) {
-      return res.status(400).json({ error: error.message });
+      return sendSuccess(res, result);
+    } catch (error: any) {
+      return sendError(res, "AUTH_ERROR", error.message, 401);
     }
   };
 
-  me = async (req, res) => {
+  me = async (req: any, res: any, next?: any) => {
     try {
       const result = await this.authService.me(req.userId);
-      return res.json(result);
-    } catch (error) {
-      return res.status(400).json({ error: error.message });
+      return sendSuccess(res, result);
+    } catch (error: any) {
+      return sendError(res, "AUTH_ERROR", error.message, 400);
+    }
+  };
+
+  logout = async (req: any, res: any, next?: any) => {
+    try {
+      const result = await this.authService.logout(req.userId);
+      return sendSuccess(res, result);
+    } catch (error: any) {
+      return sendError(res, "AUTH_ERROR", error.message, 400);
     }
   };
 }
-
-module.exports = { AuthController };

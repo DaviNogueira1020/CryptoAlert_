@@ -1,10 +1,11 @@
+export {};
 const bcrypt = require("bcrypt");
 
-async function hashSenha(password) {
+export async function hashSenha(password: any) {
   return bcrypt.hash(password, 10);
 }
 
-async function compararSenha(password, hash) {
+export async function compararSenha(password: any, hash: any) {
   return bcrypt.compare(password, hash);
 }
 

@@ -37,7 +37,7 @@ export async function verificarTodosAlertas() {
       if (alerta.initialPrice == null) {
         try {
           await prisma.alert.update({ where: { id: alerta.id }, data: { initialPrice: precoAtual } });
-        } catch (e) {
+        } catch (e: any) {
           logWarn(`[AlertsChecker] Falha ao setar initialPrice para ${alerta.id}: ${e.message}`);
         }
       }
@@ -74,12 +74,12 @@ export async function verificarTodosAlertas() {
               isActive: alerta.notifyOnce ? false : alerta.isActive,
             },
           });
-        } catch (e) {
+        } catch (e: any) {
           logError(`[AlertsChecker] Falha ao atualizar alerta ${alerta.id}: ${e.message}`, e);
         }
       }
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error("[AlertsChecker] Erro:", err);
   }
 }

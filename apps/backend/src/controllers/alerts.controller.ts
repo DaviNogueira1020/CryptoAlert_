@@ -1,4 +1,4 @@
-async criar(req, res) {
+export async function criar(req: any, res: any) {
   try {
     const {
       userId,
@@ -54,10 +54,10 @@ async criar(req, res) {
     });
 
     return res.status(201).json(novoAlerta);
-  } catch (err) {
-    return res.status(err.status || 500).json({
-      error: err.message || "Erro interno do servidor",
-      code: err.code || "INTERNAL_ERROR",
-    });
+    } catch (err: any) {
+      return res.status(err.status || 500).json({
+        error: err.message || "Erro interno do servidor",
+        code: err.code || "INTERNAL_ERROR",
+      });
+    }
   }
-}

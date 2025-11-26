@@ -1,3 +1,4 @@
+export {};
 const prisma = require("../../lib/prisma");
 
 module.exports = {

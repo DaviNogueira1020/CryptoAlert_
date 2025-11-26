@@ -1,9 +1,10 @@
-const errorHandler = (err, req, res, next) => {
+import { logError } from "../utils/logger";
+
+export const errorHandler = (err: any, req: any, res: any, next: any) => {
   const status = err && err.status ? err.status : 500;
   const message = err && err.message ? err.message : "Erro interno do servidor";
   const code = err && err.code ? err.code : "INTERNAL_ERROR";
 
-  const { logError } = require("../utils/logger");
   logError(`${code} - ${message}`, err instanceof Error ? err : new Error(String(err)));
 
   res.status(status).json({
@@ -15,8 +16,6 @@ const errorHandler = (err, req, res, next) => {
   });
 };
 
-const asyncHandler = (fn) => (req, res, next) => {
+export const asyncHandler = (fn: any) => (req: any, res: any, next: any) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };
-
-module.exports = { errorHandler, asyncHandler };

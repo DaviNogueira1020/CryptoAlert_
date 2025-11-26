@@ -1,3 +1,4 @@
+export {};
 const repository = require("./notifications.repository");
 
 module.exports = {

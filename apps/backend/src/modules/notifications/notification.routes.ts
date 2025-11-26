@@ -8,6 +8,7 @@
  * Todas exigem login.
  */
 
+export {};
 const { Router } = require("express");
 const controller = require("./notification.controller");
 const { authMiddleware } = require("../../middlewares/auth.middleware");
@@ -19,9 +20,8 @@ const { createNotificationSchema } = require("./notifications.validator");
 // Criar notificação
 router.post("/criar", authMiddleware, (req, res) => {
   const parsed = createNotificationSchema.safeParse(req.body);
-  if (!parsed.success) return res.status(400).json({ success: false, error: { code: "VALIDATION_ERROR", message: parsed.error.errors } });
-  req.body = parsed.data;
-  return controller.criar(req, res);
+  if (!parsed.success) return res.status(400).json({ success: false, error: { code: "VALIDATION_ERROR", message: parsed.error.issues } });
+  return controller.criar(req, res, parsed.data);
 });
 
 // Listar notificações do usuário logado

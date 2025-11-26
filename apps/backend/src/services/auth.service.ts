@@ -1,8 +1,8 @@
-const prisma = require("../lib/prisma");
-const { hashSenha, compararSenha } = require("../utils/hash");
-const { gerarTokenJwt } = require("../utils/jwt");
+import prisma from "../lib/prisma";
+import { hashSenha, compararSenha } from "../utils/hash";
+import { gerarTokenJwt } from "../utils/jwt";
 
-class AuthService {
+export default class AuthService {
   async register(data) {
     const userExists = await prisma.user.findUnique({
       where: { email: data.email },
@@ -49,6 +49,11 @@ class AuthService {
 
     return user;
   }
+
+  async logout(userId) {
+    // JWT é stateless neste projeto; logout é tratado no cliente removendo o token.
+    // Aqui apenas retornamos confirmação. Se implementar blacklist, persistir aqui.
+    return { success: true };
+  }
 }
 
-module.exports = { AuthService };

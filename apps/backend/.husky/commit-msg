@@ -1,0 +1,5 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Chama o script que valida mensagens em Português
+node ./scripts/commit-msg-check.js $1

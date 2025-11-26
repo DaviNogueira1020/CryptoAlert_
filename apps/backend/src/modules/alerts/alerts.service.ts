@@ -1,10 +1,15 @@
-const repository = require("./alerts.repository");
+import AlertsRepository from "./alerts.repository";
+import prismaClient from "../../lib/prisma";
 
-module.exports = {
-  async criarAlerta(userId, body) {
+const repository = AlertsRepository;
+
+export default {
+  async criarAlerta(userId: any, body: any) {
+    // Accept both legacy keys (coin, price) and new keys (crypto, targetPrice)
     const {
       coin,
       price,
+      crypto,
       direction,
       baseCurrency,
       isFavorite,
@@ -14,11 +19,14 @@ module.exports = {
       notes,
     } = body;
 
-    if (!coin || price === undefined || !direction) throw new Error("Dados incompletos: coin, price e direction são obrigatórios");
+    const resolvedCoin = coin ?? crypto;
+    const resolvedPrice = price !== undefined ? price : body.targetPrice;
+
+    if (!resolvedCoin || resolvedPrice === undefined || !direction) throw new Error("Dados incompletos: coin/crypto, price/targetPrice e direction são obrigatórios");
 
     if (!["above", "below"].includes(direction)) throw new Error("direction inválido");
 
-    const targetPrice = Number(price);
+    const targetPrice = Number(resolvedPrice);
     if (Number.isNaN(targetPrice) || targetPrice <= 0) throw new Error("price inválido");
 
     if (baseCurrency && typeof baseCurrency !== "string") throw new Error("baseCurrency inválido");
@@ -30,31 +38,53 @@ module.exports = {
 
     const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
 
-    return repository.create({
-      userId: uid,
-      crypto: String(coin).toUpperCase(),
-      baseCurrency: baseCurrency ? String(baseCurrency).toUpperCase() : null,
-      targetPrice: targetPrice,
-      direction,
-      isFavorite: Boolean(isFavorite ?? false),
-      notifyOnce: Boolean(notifyOnce ?? false),
-      cooldown: cooldown !== undefined ? Number(cooldown) : null,
-      title: title ?? null,
-      notes: notes ?? null,
+    // Prefer repository create
+    if (repository && typeof repository.create === "function") {
+      return repository.create({
+        userId: uid,
+        crypto: String(resolvedCoin).toUpperCase(),
+        baseCurrency: baseCurrency ? String(baseCurrency).toUpperCase() : null,
+        targetPrice: targetPrice,
+        direction,
+        isFavorite: Boolean(isFavorite ?? false),
+        notifyOnce: Boolean(notifyOnce ?? false),
+        cooldown: cooldown !== undefined ? Number(cooldown) : null,
+        title: title ?? null,
+        notes: notes ?? null,
+      });
+    }
+
+    // fallback to direct Prisma if repository missing
+    return prismaClient.alert.create({
+      data: {
+        userId: uid,
+        crypto: String(resolvedCoin).toUpperCase(),
+        baseCurrency: baseCurrency ? String(baseCurrency).toUpperCase() : null,
+        targetPrice: targetPrice,
+        direction,
+        isActive: true,
+        isFavorite: Boolean(isFavorite ?? false),
+        notifyOnce: Boolean(notifyOnce ?? false),
+        initialPrice: null,
+        lastTriggeredAt: null,
+        title: title ?? null,
+        notes: notes ?? null,
+        cooldown: cooldown !== undefined ? Number(cooldown) : null,
+      },
     });
   },
 
-  async listarAlertas(userId) {
+  async listarAlertas(userId: any, options: any = {}) {
     const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
-    return repository.findByUser(uid);
+    return repository.findByUser(uid, options);
   },
 
-  async atualizarAlerta(userId, id, body) {
+  async atualizarAlerta(userId: any, id: any, body: any) {
     const alert = await repository.findById(id);
     const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
     if (!alert || alert.userId !== uid) throw new Error("Alerta não encontrado ou não pertence ao usuário");
 
-    const data = {};
+    const data: any = {};
     if (body.coin) data.crypto = String(body.coin).toUpperCase();
     if (body.price !== undefined) {
       const tp = Number(body.price);
@@ -80,7 +110,7 @@ module.exports = {
     return repository.update(id, data);
   },
 
-  async deletarAlerta(userId, id) {
+  async deletarAlerta(userId: any, id: any) {
     const alert = await repository.findById(id);
     const uid = typeof userId === "string" ? parseInt(userId, 10) : userId;
     if (!alert || alert.userId !== uid) throw new Error("Alerta não encontrado ou não pertence ao usuário");

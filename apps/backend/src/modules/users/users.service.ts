@@ -1,3 +1,4 @@
+export {};
 const repository = require("./users.repository");
 const bcrypt = require("bcrypt");
 

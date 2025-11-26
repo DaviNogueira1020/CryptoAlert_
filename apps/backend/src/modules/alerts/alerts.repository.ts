@@ -1,8 +1,8 @@
-const prisma = require("../../lib/prisma");
+import prismaClient from "../../lib/prisma";
 
-module.exports = {
-  create(data) {
-    return prisma.alert.create({
+const AlertsRepository = {
+  create(data: any) {
+    return prismaClient.alert.create({
       data: {
         userId: data.userId,
 
@@ -27,22 +27,28 @@ module.exports = {
     });
   },
 
-  findByUser(userId) {
-    return prisma.alert.findMany({
-      where: { userId },
-      orderBy: { createdAt: "desc" },
-      include: { user: true },
-    });
+  async findByUser(userId: number, options: any = {}) {
+    const page = options.page && options.page > 0 ? Number(options.page) : 1;
+    const limit = options.limit && options.limit > 0 ? Number(options.limit) : 20;
+    const skip = (page - 1) * limit;
+
+    const where: any = { userId };
+    // optional filters could be added here (e.g., crypto, isActive)
+
+    const [items, total] = await Promise.all([
+      prismaClient.alert.findMany({ where, orderBy: { createdAt: "desc" }, skip, take: limit }),
+      prismaClient.alert.count({ where }),
+    ]);
+
+    return { items, total, page, limit };
   },
 
-  findById(id) {
-    return prisma.alert.findUnique({
-      where: { id },
-    });
+  findById(id: string) {
+    return prismaClient.alert.findUnique({ where: { id } });
   },
 
-  update(id, data) {
-    return prisma.alert.update({
+  update(id: string, data: any) {
+    return prismaClient.alert.update({
       where: { id },
       data: {
         crypto: data.crypto,
@@ -65,9 +71,9 @@ module.exports = {
     });
   },
 
-  delete(id) {
-    return prisma.alert.delete({
-      where: { id },
-    });
+  delete(id: string) {
+    return prismaClient.alert.delete({ where: { id } });
   },
 };
+
+export default AlertsRepository;

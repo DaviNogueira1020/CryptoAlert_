@@ -1,7 +1,8 @@
+export {};
 // Importa o serviço principal que verifica todos os alertas
 const { verificarTodosAlertas } = require("../services/alerts-checker.service");
 
-let intervaloAtivo = null;
+let intervaloAtivo: any = null;
 let consecutiveErrors = 0;
 const MAX_CONSECUTIVE_ERRORS = Number(process.env.ALERTS_MAX_CONSECUTIVE_ERRORS || 5);
 const RETRY_ATTEMPTS = Number(process.env.ALERTS_RETRY_ATTEMPTS || 2);
@@ -84,3 +85,6 @@ module.exports = {
   startAlertsJob: iniciarJobAlertas,
   stopAlertsJob: pararJobAlertas,
 };
+
+// Named exports para interoperabilidade com import ESModule
+export { iniciarJobAlertas, pararJobAlertas };

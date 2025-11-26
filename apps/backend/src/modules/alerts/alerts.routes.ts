@@ -1,34 +1,42 @@
-const express = require("express");
-const router = express.Router();
+export {};
+import express from "express";
+import controller from "./alerts.controller";
+import { authMiddleware } from "../../middlewares/auth.middleware";
+import { createAlertSchema, updateAlertSchema, listAlertsQuerySchema, idParamSchema } from "./alerts.validator";
 
-const controller = require("./alerts.controller");
-const { authMiddleware } = require("../../middlewares/auth.middleware");
-const { createAlertSchema, updateAlertSchema } = require("./alerts.validator");
+const router = express.Router();
 
 // Criar alerta com validação Zod
 router.post("/", authMiddleware, (req, res) => {
 	const parsed = createAlertSchema.safeParse(req.body);
 	if (!parsed.success) {
-		return res.status(400).json({ success: false, error: { code: "VALIDATION_ERROR", message: parsed.error.errors } });
+		return res.status(400).json({ success: false, error: { code: "VALIDATION_ERROR", message: parsed.error.issues } });
 	}
-	req.body = parsed.data;
-	return controller.criar(req, res);
+	return controller.criar(req, res, parsed.data);
 });
 
-// Listar
-router.get("/", authMiddleware, controller.listar);
+// Listar (com paginação e include)
+router.get("/", authMiddleware, (req: any, res: any) => {
+	const parsed = listAlertsQuerySchema.safeParse(req.query);
+	if (!parsed.success) return res.status(400).json({ success: false, error: { code: "VALIDATION_ERROR", message: parsed.error.issues } });
+	return controller.listar(req, res, parsed.data);
+});
 
 // Atualizar com validação Zod
-router.put("/:id", authMiddleware, (req, res) => {
+router.put("/:id", authMiddleware, (req: any, res: any) => {
+	const idParsed = idParamSchema.safeParse(req.params);
+	if (!idParsed.success) return res.status(400).json({ success: false, error: { code: "VALIDATION_ERROR", message: idParsed.error.issues } });
+
 	const parsed = updateAlertSchema.safeParse(req.body);
-	if (!parsed.success) {
-		return res.status(400).json({ success: false, error: { code: "VALIDATION_ERROR", message: parsed.error.errors } });
-	}
-	req.body = parsed.data;
-	return controller.atualizar(req, res);
+	if (!parsed.success) return res.status(400).json({ success: false, error: { code: "VALIDATION_ERROR", message: parsed.error.issues } });
+	return controller.atualizar(req, res, idParsed.data, parsed.data);
 });
 
 // Deletar
-router.delete("/:id", authMiddleware, controller.remover);
+router.delete("/:id", authMiddleware, (req: any, res: any) => {
+	const idParsed = idParamSchema.safeParse(req.params);
+	if (!idParsed.success) return res.status(400).json({ success: false, error: { code: "VALIDATION_ERROR", message: idParsed.error.issues } });
+	return controller.remover(req, res, idParsed.data);
+});
 
-module.exports = router;
+export default router;

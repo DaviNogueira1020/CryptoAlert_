@@ -1,17 +1,20 @@
-const express = require("express");
-const cors = require("cors");
-const authRoutes = require("./routes/auth.routes");
-const healthRoutes = require("./routes/health.routes");
-const { errorHandler } = require("./middlewares/errorHandler");
-const { limiter } = require("./middlewares/rateLimit.middleware");
-const { httpLogger } = require("./utils/logger");
+export {};
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import { env } from "./config/env";
+import authRoutes from "./routes/auth.routes";
+import healthRoutes from "./routes/health.routes";
+import { errorHandler } from "./middlewares/errorHandler";
+import { limiter } from "./middlewares/rateLimit.middleware";
+import { httpLogger } from "./utils/logger";
 
 // Swagger
-const swaggerUi = require("swagger-ui-express");
-const openapi = require("../docs/openapi.json");
+import swaggerUi from "swagger-ui-express";
+import openapi from "../docs/openapi.json";
 
 // Alerts routes
-const alertsRoutes = require("./modules/alerts/alerts.routes");
+import alertsRoutes from "./modules/alerts/alerts.routes";
 
 // Notifications routes (ADICIONE ESTA LINHA)
 const notificationRoutes = require("./modules/notifications/notification.routes");
@@ -22,7 +25,13 @@ const app = express();
 
 // Middlewares
 app.use(httpLogger);
-app.use(cors());
+// Security headers
+app.use(helmet());
+// CORS configuration: allow only configured origins in production, permissive in dev
+const corsOptions = {
+  origin: env.NODE_ENV === "production" ? (process.env.CORS_ORIGIN || "https://your-frontend.example.com") : true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(limiter);
@@ -54,4 +63,4 @@ app.use((req, res) => {
 // Error handler
 app.use(errorHandler);
 
-module.exports = app;
+export default app;

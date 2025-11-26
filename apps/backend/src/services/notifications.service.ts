@@ -1,3 +1,4 @@
+export {};
 const notificationsModule = require("../modules/notifications/notification.service");
 const notificationsRepository = require("../modules/notifications/notifications.repository");
 
@@ -6,7 +7,7 @@ class NotificationsService {
    * Cria uma notificação.
    * Aceita payloads variados — sempre tenta persistir os campos mínimos (crypto/target/direction).
    */
-  async createNotification(payload) {
+  async createNotification(payload: any) {
     const { userId } = payload;
 
     // se vierem campos de alerta, prefira eles
@@ -41,4 +42,4 @@ class NotificationsService {
   }
 }
 
-module.exports = { NotificationsService };
+export { NotificationsService };

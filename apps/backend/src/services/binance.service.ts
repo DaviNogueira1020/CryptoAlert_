@@ -1,3 +1,4 @@
+export {};
 const axios = require("axios");
 
 const BINANCE_API = "https://api.binance.com/api/v3/ticker/price";
@@ -7,7 +8,7 @@ const BINANCE_API = "https://api.binance.com/api/v3/ticker/price";
  * @param {string} symbol - e.g., BTCUSDT, ETHUSDT
  * @returns {Promise<number>} price
  */
-async function obterPreco(symbol) {
+export async function obterPreco(symbol: any) {
   try {
     const response = await axios.get(BINANCE_API, {
       params: { symbol },
@@ -25,7 +26,7 @@ async function obterPreco(symbol) {
  * @param {string[]} symbols - array of symbols
  * @returns {Promise<Object>} { BTCUSDT: 45000, ETHUSDT: 2500, ... }
  */
-async function obterPrecos(symbols) {
+export async function obterPrecos(symbols: any) {
   if (!symbols || symbols.length === 0) return {};
 
   try {

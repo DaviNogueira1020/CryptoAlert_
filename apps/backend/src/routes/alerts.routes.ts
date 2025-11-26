@@ -1,3 +1,4 @@
+export {};
 const { Router } = require("express");
 const { AlertsController } = require("../controllers/alerts.controller");
 

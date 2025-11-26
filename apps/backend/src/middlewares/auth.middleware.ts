@@ -1,6 +1,6 @@
-const { verificarTokenJwt } = require("../utils/jwt");
+import { verificarTokenJwt } from "../utils/jwt";
 
-function authMiddleware(req, res, next) {
+export const authMiddleware = (req: any, res: any, next: any) => {
   const authHeader = req.headers && (req.headers.authorization || req.headers.Authorization);
 
   if (!authHeader || typeof authHeader !== "string") {
@@ -18,13 +18,11 @@ function authMiddleware(req, res, next) {
     const decoded = verificarTokenJwt(token);
     // store both for compatibility with different handlers
     req.user = decoded;
-    if (decoded && decoded.id) {
-      req.userId = Number(decoded.id);
+    if (decoded && (decoded as any).id) {
+      req.userId = Number((decoded as any).id);
     }
     next();
   } catch (error) {
     return res.status(401).json({ error: "Token inválido" });
   }
-}
-
-module.exports = { authMiddleware };
+};

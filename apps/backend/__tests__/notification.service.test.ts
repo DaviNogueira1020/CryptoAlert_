@@ -32,3 +32,4 @@ describe('Notification service', () => {
     await expect(service.marcarComoLida(1, 'n2')).rejects.toThrow('Acesso negado');
   });
 });
+
