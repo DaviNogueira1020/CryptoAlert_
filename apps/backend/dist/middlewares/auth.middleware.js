@@ -16,8 +16,10 @@ const authMiddleware = (req, res, next) => {
         const decoded = (0, jwt_1.verificarTokenJwt)(token);
         // store both for compatibility with different handlers
         req.user = decoded;
-        if (decoded && decoded.id) {
-            req.userId = Number(decoded.id);
+        // Support tokens that may include either `id` or `userId` in the payload
+        const extractedId = decoded && (decoded.userId ?? decoded.id);
+        if (extractedId !== undefined && extractedId !== null) {
+            req.userId = Number(extractedId);
         }
         next();
     }
