@@ -1,0 +1,35 @@
+[AlertsChecker] Erro ao criar notificação: TypeError: notificationsRepository.create is not a function
+    at NotificationsService.createNotification (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\notifications.service.js:31:44)
+    at criarNotificacao (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\alerts-checker.service.js:98:29)
+    at verificarTodosAlertas (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\alerts-checker.service.js:61:23)
+    at async C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\jobs\alerts-checker.job.js:35:17
+[AlertsChecker] Erro ao criar notificação: TypeError: notificationsRepository.create is not a function
+    at NotificationsService.createNotification (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\notifications.service.js:31:44)
+    at criarNotificacao (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\alerts-checker.service.js:98:29)
+    at verificarTodosAlertas (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\alerts-checker.service.js:61:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\jobs\alerts-checker.job.js:35:17
+[AlertsChecker] Erro ao criar notificação: TypeError: notificationsRepository.create is not a function
+    at NotificationsService.createNotification (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\notifications.service.js:31:44)
+    at criarNotificacao (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\alerts-checker.service.js:98:29)
+    at verificarTodosAlertas (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\alerts-checker.service.js:61:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\jobs\alerts-checker.job.js:35:17
+[AlertsChecker] Erro ao criar notificação: TypeError: notificationsRepository.create is not a function
+    at NotificationsService.createNotification (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\notifications.service.js:31:44)
+    at criarNotificacao (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\alerts-checker.service.js:98:29)
+    at verificarTodosAlertas (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\alerts-checker.service.js:61:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\jobs\alerts-checker.job.js:35:17
+[AlertsChecker] Erro ao criar notificação: TypeError: notificationsRepository.create is not a function
+    at NotificationsService.createNotification (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\notifications.service.js:31:44)
+    at criarNotificacao (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\alerts-checker.service.js:98:29)
+    at verificarTodosAlertas (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\alerts-checker.service.js:61:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\jobs\alerts-checker.job.js:35:17
+[AlertsChecker] Erro ao criar notificação: TypeError: notificationsRepository.create is not a function
+    at NotificationsService.createNotification (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\notifications.service.js:31:44)
+    at criarNotificacao (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\alerts-checker.service.js:98:29)
+    at verificarTodosAlertas (C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\services\alerts-checker.service.js:61:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async C:\Users\davin\OneDrive\Área de Trabalho\CriptoAlert_\apps\backend\dist\jobs\alerts-checker.job.js:35:17
