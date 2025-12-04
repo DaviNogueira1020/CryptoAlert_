@@ -25,29 +25,55 @@ model Alert {
   userId          Int
   user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  // Identificação da moeda
   crypto          String
   baseCurrency    String?        // USD, BRL, USDT, etc.
-  targetPrice     Float
-  direction       AlertDirection
+  
+  // Tipo de alerta
+  tipo            AlertTipo      @default(precoAlvo)
 
+  // Condições por tipo
+  precoAlvo       Float?         // Para tipo: preço-alvo
+  percentualAlta  Float?         // Para tipo: alta-percentual
+  percentualQueda Float?         // Para tipo: queda-percentual
+  volumeMinimo    Float?         // Para tipo: volume
+
+  direction       AlertDirection @default(above) // above/below para preços
+
+  // Status e ativação
   isActive        Boolean        @default(true)
   isFavorite      Boolean        @default(false)
   notifyOnce      Boolean        @default(false)
 
+  // Agendamento
+  alertDate       DateTime?      // Data específica do alerta
+  alertTime       String?        // Hora no formato HH:MM (armazenada como string)
+
+  // Notificação
+  notificationType NotificationChannel @default(system) // Como notificar: email, SMS, push, system
+  priority        AlertPriority  @default(normal)       // Prioridade: normal, alta, crítica
+
+  // Recorrência
+  repetition      AlertRepetition @default(once)        // Frequência: uma vez, diário, semanal
+
+  // Histórico e rastreamento
   initialPrice    Float?
   lastTriggeredAt DateTime?
+  triggerCount    Int            @default(0)
 
   title           String?        // Nome curto do alerta
-  notes           String?        // Texto opcional do usuário
+  description     String?        // Descrição/observações do alerta
 
   cooldown        Int?           // em segundos (60, 300, 3600...)
-  cooldownMinutes Int?           // minutos de cooldown (nova coluna)
+  cooldownMinutes Int?           // minutos de cooldown
 
   createdAt       DateTime       @default(now())
-  updatedAt       DateTime @updatedAt
+  updatedAt       DateTime       @updatedAt
 
   @@index([userId])
   @@index([crypto])
+  @@index([isActive])
+  @@index([priority])
 }
 
 model Notification {
@@ -78,7 +104,33 @@ enum NotificationType {
   info
 }
 
+enum NotificationChannel {
+  email
+  sms
+  push
+  system
+}
+
 enum AlertDirection {
   above
   below
+}
+
+enum AlertTipo {
+  precoAlvo
+  altaPercentual
+  quedaPercentual
+  volume
+}
+
+enum AlertPriority {
+  normal
+  alta
+  critica
+}
+
+enum AlertRepetition {
+  once
+  diario
+  semanal
 }

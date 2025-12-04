@@ -1,35 +1,154 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
+import { Login } from './components/Login';
+import { Navbar } from './components/Navbar';
+import { PriceTicker } from './components/PriceTicker';
+import { Dashboard } from './components/Dashboard';
+import { CryptoDetail } from './components/CryptoDetail';
+import { Alerts } from './components/Alerts';
+import { News } from './components/News';
+import { Profile } from './components/Profile';
+import { ParticleBackground } from './components/ParticleBackground';
+import { Toaster, toast } from 'sonner';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [accessToken, setAccessToken] = useState('');
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [currentPage, setCurrentPage] = useState('dashboard');
+  const [selectedCoinId, setSelectedCoinId] = useState<string | null>(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    checkExistingSession();
+  }, []);
+
+  const checkExistingSession = () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const name = localStorage.getItem('userName');
+      const email = localStorage.getItem('userEmail');
+
+      if (token && name) {
+        setAccessToken(token);
+        setUserName(name);
+        setUserEmail(email || '');
+        setIsAuthenticated(true);
+      }
+    } catch (error) {
+      console.error('Error checking session:', error);
+    } finally {
+      setCheckingAuth(false);
+    }
+  };
+
+  const handleLogin = (token: string, name: string, email?: string) => {
+    setAccessToken(token);
+    setUserName(name);
+    setUserEmail(email || '');
+    setIsAuthenticated(true);
+    
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('userName', name);
+    if (email) localStorage.setItem('userEmail', email);
+
+    toast.success(`Bem-vindo, ${name}!`);
+  };
+
+  const handleLogout = () => {
+    try {
+      setIsAuthenticated(false);
+      setAccessToken('');
+      setUserName('');
+      setUserEmail('');
+      setCurrentPage('dashboard');
+      setSelectedCoinId(null);
+      
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userEmail');
+      
+      toast.success('Logout realizado com sucesso');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      toast.error('Erro ao fazer logout');
+    }
+  };
+
+  const handleNavigate = (page: string) => {
+    setCurrentPage(page);
+    setSelectedCoinId(null);
+  };
+
+  const handleViewDetails = (coinId: string) => {
+    setSelectedCoinId(coinId);
+    setCurrentPage('detail');
+  };
+
+  const handleCreateAlertFromDetail = () => {
+    setCurrentPage('alerts');
+  };
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <ParticleBackground />
+        <div className="text-white text-xl z-10">Carregando...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <>
+        <Login onLogin={handleLogin} />
+        <Toaster position="top-right" theme="dark" />
+      </>
+    );
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="min-h-screen bg-black relative">
+      <ParticleBackground />
+      
+      <div className="relative z-10">
+        <Navbar
+          currentPage={currentPage}
+          onNavigate={handleNavigate}
+          onLogout={handleLogout}
+          userName={userName}
+        />
+        
+        <PriceTicker />
 
-export default App
+        {currentPage === 'dashboard' && <Dashboard onViewDetails={handleViewDetails} />}
+
+        {currentPage === 'detail' && selectedCoinId && (
+          <CryptoDetail
+            coinId={selectedCoinId}
+            onBack={() => setCurrentPage('dashboard')}
+            onCreateAlert={handleCreateAlertFromDetail}
+          />
+        )}
+
+        {currentPage === 'alerts' && (
+          <Alerts 
+            accessToken={accessToken}
+          />
+        )}
+
+        {currentPage === 'news' && <News />}
+
+        {currentPage === 'profile' && (
+          <Profile 
+            userName={userName} 
+            userEmail={userEmail}
+            alertCount={alertCount}
+          />
+        )}
+      </div>
+
+      <Toaster position="top-right" theme="dark" />
+    </div>
+  );
+}

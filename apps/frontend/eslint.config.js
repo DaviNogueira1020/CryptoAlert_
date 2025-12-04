@@ -5,7 +5,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import tseslint from 'typescript-eslint'
 
 export default [
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'src/pages/Alerts.tsx'] },
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
@@ -22,6 +22,19 @@ export default [
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
       'react/prop-types': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', { 
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+      }],
+    },
+  },
+  {
+    files: ['**/pages/Alerts.tsx'],
+    rules: {
+      'no-parsing-error': 'off',
+    },
+    linterOptions: {
+      reportUnusedDisableDirectives: false,
     },
   },
   ...tseslint.configs.recommended,

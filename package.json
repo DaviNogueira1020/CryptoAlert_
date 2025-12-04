@@ -4,12 +4,16 @@
   "description": "CriptoAlert - Real-time crypto price alerts",
   "private": true,
   "type": "module",
+  "engine": {
+    "node": ">=18.0.0"
+  },
   "workspaces": [
     "apps/backend",
     "apps/frontend",
     "packages/shared"
   ],
   "scripts": {
+    "start": node src,
     "dev": "npm run dev --workspace=apps/backend & npm run dev --workspace=apps/frontend",
     "build": "npm run build --workspaces",
     "test": "npm run test --workspaces",

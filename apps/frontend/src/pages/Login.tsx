@@ -1,9 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LogIn, UserPlus, TrendingUp } from 'lucide-react';
-import { createClient } from '../utils/supabase/client';
-import { projectId, publicAnonKey } from '../utils/supabase/info';
-import { motion } from 'motion/react';
-import { ParticleBackground } from './ParticleBackground';
+import { motion } from 'framer-motion';
+import { ParticleBackground } from '../components/ParticleBackground';
 
 interface LoginProps {
   onLogin: (accessToken: string, userName: string) => void;
@@ -16,6 +15,7 @@ export function Login({ onLogin }: LoginProps) {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,53 +23,37 @@ export function Login({ onLogin }: LoginProps) {
     setLoading(true);
 
     try {
-      if (isSignup) {
-        const response = await fetch(
-          `https://${projectId}.supabase.co/functions/v1/make-server-e49cbdd6/signup`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${publicAnonKey}`,
-            },
-            body: JSON.stringify({ email, password, name }),
-          }
-        );
+      await new Promise((res) => setTimeout(res, 500));
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Erro ao criar conta');
-        }
-
-        const supabase = createClient();
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (signInError) throw signInError;
-
-        if (signInData.session?.access_token) {
-          onLogin(signInData.session.access_token, name);
-        }
-      } else {
-        const supabase = createClient();
-        const { data, error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (signInError) throw signInError;
-
-        if (data.session?.access_token) {
-          const userName = data.user?.user_metadata?.name || email.split('@')[0];
-          onLogin(data.session.access_token, userName);
-        }
+      if (!email || !password) {
+        throw new Error('Email e senha são obrigatórios');
       }
-    } catch (err: any) {
-      console.error('Authentication error:', err);
-      setError(err.message || 'Erro ao autenticar');
+
+      if (isSignup && !name) {
+        throw new Error('Nome é obrigatório');
+      }
+
+      if (password.length < 6) {
+        throw new Error('Senha deve ter pelo menos 6 caracteres');
+      }
+
+      const accessToken = btoa(`${email}:${password}:${Date.now()}`);
+      const userName = name || email.split('@')[0];
+
+      if (typeof onLogin === 'function') {
+        onLogin(accessToken, userName);
+      } else {
+        try {
+          localStorage.setItem('authToken', accessToken);
+          localStorage.setItem('userName', userName);
+        } catch {
+          // localStorage may not be available in some contexts
+        }
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -213,5 +197,4 @@ export function Login({ onLogin }: LoginProps) {
   );
 }
 
-
-faça o login nesse estio mas que seja compativel com o projeto
+export default Login;
