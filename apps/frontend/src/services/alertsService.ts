@@ -91,61 +91,47 @@ export interface UpdateAlertInput {
 }
 
 export const alertsService = {
-  // Listar alertas com paginação e filtros
-  getAll: async (page = 1, limit = 10): Promise<{ alerts: Alert[], total: number }> => {
-    const { data } = await api.get('/alerts/listar', {
+  // Listar alertas
+  getAll: async (page = 1, limit = 10): Promise<Alert[]> => {
+    const { data } = await api.get('/alerts', {
       params: { page, limit },
     });
-    return data;
+    return Array.isArray(data) ? data : data.data || data.alerts || [];
   },
 
   // Listar com filtros avançados
   getAllFiltered: async (filters?: any): Promise<Alert[]> => {
-    const { data } = await api.get('/alerts/listar', {
+    const { data } = await api.get('/alerts', {
       params: filters || {},
     });
-    return data.alerts || data;
+    return Array.isArray(data) ? data : data.data || data.alerts || [];
   },
 
   getById: async (id: string): Promise<Alert> => {
     const { data } = await api.get(`/alerts/${id}`);
-    return data.data || data;
+    return data;
   },
 
-  // Criar novo alerta (PUT -> novo endpoint)
+  // Criar novo alerta
   create: async (alert: CreateAlertInput): Promise<Alert> => {
-    const { data } = await api.post('/alerts/criar', alert);
+    const { data } = await api.post('/alerts', alert);
     return data.data || data;
   },
 
   // Atualizar alerta existente
   update: async (id: string, updates: UpdateAlertInput): Promise<Alert> => {
-    const { data } = await api.put(`/alerts/atualizar/${id}`, updates);
+    const { data } = await api.put(`/alerts/${id}`, updates);
     return data.data || data;
   },
 
   // Deletar alerta
   delete: async (id: string): Promise<void> => {
-    await api.delete(`/alerts/remover/${id}`);
+    await api.delete(`/alerts/${id}`);
   },
 
   // Ativar/desativar alerta
   toggleActive: async (id: string, ativo: boolean): Promise<Alert> => {
-    const { data } = await api.patch(`/alerts/${id}/ativar-desativar`, { ativo });
-    return data.data || data;
-  },
-
-  // Duplicar alerta
-  duplicate: async (id: string): Promise<Alert> => {
-    const { data } = await api.post(`/alerts/${id}/duplicar`);
-    return data.data || data;
-  },
-
-  // Exportar alertas
-  export: async (formato: 'json' | 'csv' = 'json'): Promise<any> => {
-    const { data } = await api.get(`/alerts/exportar/alertas`, {
-      params: { formato },
-    });
+    const { data } = await api.patch(`/alerts/${id}`, { isActive: ativo });
     return data;
   },
 };

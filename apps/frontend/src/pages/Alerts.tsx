@@ -250,7 +250,7 @@ export default function Alerts() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-black via-[#0a0e27] to-black py-8 sm:py-12 px-4 sm:px-6">
+    <div className="w-full min-h-screen bg-gradient-to-br from-black via-[#0a0e27] to-black py-8 sm:py-12 px-4 sm:px-6 mt-8">
       <div className="w-full max-w-6xl mx-auto">
         {/* HEADER - Seção Principal com forte hierarquia visual */}
         <motion.div
@@ -1283,7 +1283,7 @@ export default function Alerts() {
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="flex-1 px-4 py-3 bg-gray-800/50 border border-gray-700 text-white rounded-lg hover:bg-gray-700/50 transition-colors font-bold"
+                    className="flex-1 px-4 py-3 bg-gray-800/50 border border-gray-700 text-white rounded-lg hover:bg-gray-700/50 transition-colors"
                   >
                     Cancelar
                   </button>

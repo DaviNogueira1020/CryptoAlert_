@@ -1807,3 +1807,89 @@ html {
     transform: rotate(360deg);
   }
 }
+
+/* Custom styling for select options */
+select option {
+  background-color: #1a1f35;
+  color: #ffffff;
+}
+
+select option:checked {
+  background-color: #5B52FF;
+  color: #ffffff;
+}
+
+/* Custom scrollbar styling - Enhanced */
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 12px !important;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #5B52FF !important;
+  border-radius: 6px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #7C3AED !important;
+  background-clip: content-box;
+}
+
+/* Firefox scrollbar */
+.overflow-y-auto {
+  scrollbar-width: auto !important;
+  scrollbar-color: #5B52FF rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Modal scrollable - FIX DEFINITIVO */
+.modal-scrollable-container {
+  display: flex !important;
+  flex-direction: column !important;
+  position: relative !important;
+  width: 100% !important;
+  max-width: 600px !important;
+  max-height: calc(100vh - 32px) !important;
+  height: auto !important;
+  background-color: #0a0e27 !important;
+  border-radius: 0.5rem !important;
+  border: 2px solid #00B8D4 !important;
+}
+
+.modal-scrollable-container > div:nth-child(1) {
+  flex-shrink: 0 !important;
+  padding: 1.5rem !important;
+  border-bottom: 1px solid rgba(0, 184, 212, 0.2) !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.modal-scrollable-container > div:nth-child(2) {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  max-height: calc(100vh - 32px - 88px - 96px) !important;
+  min-height: 0 !important;
+}
+
+.modal-scrollable-container > div:nth-child(2) > div {
+  padding: 1.5rem !important;
+}
+
+.modal-scrollable-container > div:nth-child(3) {
+  flex-shrink: 0 !important;
+  padding: 1.5rem !important;
+  border-top: 1px solid rgba(0, 184, 212, 0.2) !important;
+  display: flex !important;
+  gap: 0.75rem !important;
+}
+

@@ -193,8 +193,9 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-8 relative pt-12"
         >
+          <div className="absolute -top-12 left-0 right-0 h-12 bg-black"></div>
           <h1 className="text-white text-4xl font-bold flex items-center gap-3 mb-2">
             <Bell className="w-8 h-8 text-[#00B8D4]" />
             Meus Alertas
@@ -219,7 +220,7 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
         >
           <motion.button
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#5B52FF] to-[#7C3AED] text-white font-bold rounded-lg hover:from-[#4F46E5] hover:to-[#6D28D9] transition-all shadow-lg shadow-[#5B52FF]/40"
+            className="flex items-center gap-2 px-6 py-3 bg-[#5B52FF] text-white font-bold rounded-lg hover:bg-[#4F46E5] transition-all shadow-lg shadow-[#5B52FF]/40"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -400,28 +401,36 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setShowCreateModal(false)}
-              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto"
+              onClick={(e) => {
+                // Fecha o modal apenas se clicar no overlay (área escura)
+                if (e.target === e.currentTarget) {
+                  setShowCreateModal(false);
+                }
+              }}
+              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
             >
               <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
-                className="bg-[#0A0E27] rounded-lg p-8 max-w-2xl w-full border-2 border-[#00B8D4] my-8"
+                className="modal-scrollable-container"
               >
-                <div className="flex justify-between items-center mb-6">
+                {/* Header fixo */}
+                <div>
                   <h2 className="text-white text-2xl font-bold">Novo Alerta</h2>
                   <motion.button
                     onClick={() => setShowCreateModal(false)}
-                    className="text-gray-400 hover:text-white"
+                    className="text-gray-400 hover:text-white hover:bg-[#1a1f35] p-2 rounded-lg transition-colors"
                     whileHover={{ scale: 1.1 }}
+                    title="Fechar (Esc)"
                   >
                     <X className="w-6 h-6" />
                   </motion.button>
                 </div>
 
-                <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+                {/* Conteúdo rolável */}
+                <div>
+                  <div className="space-y-4 p-6">
                   {/* Seção Básica */}
                   <div className="bg-[#1a1f35]/50 rounded-lg p-4 border border-[#00B8D4]/20">
                     <h3 className="text-white font-bold mb-4 flex items-center gap-2">
@@ -446,7 +455,7 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
                         <select
                           value={createData.tipo}
                           onChange={(e) => setCreateData({ ...createData, tipo: e.target.value as any })}
-                          className="w-full px-4 py-2 bg-[#1a1f35] text-white rounded-lg border border-[#00B8D4]/30 focus:border-[#00B8D4] focus:outline-none"
+                          className="w-full px-4 py-2 bg-[#1a1f35] text-white rounded-lg border border-[#00B8D4]/30 focus:border-[#00B8D4] focus:outline-none cursor-pointer"
                         >
                           <option value="precoAlvo">Preço Alvo</option>
                           <option value="altaPercentual">Alta Percentual</option>
@@ -510,7 +519,7 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
                     className="w-full py-3 px-4 bg-[#1a1f35]/50 border border-[#00B8D4]/20 rounded-lg text-white font-bold hover:bg-[#1a1f35]/70 transition-all flex items-center justify-between"
                   >
                     <span className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-full bg-[#7C3AED] text-white text-xs flex items-center justify-center">2</span>
+                      <span className="w-6 h-6 rounded-full bg-[#5B52FF] text-white text-xs flex items-center justify-center">2</span>
                       Configurações Avançadas
                     </span>
                     <span className="text-sm">{showAdvanced ? '▼' : '▶'}</span>
@@ -541,11 +550,11 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
                             <select
                               value={createData.priority}
                               onChange={(e) => setCreateData({ ...createData, priority: e.target.value as any })}
-                              className="w-full px-4 py-2 bg-[#1a1f35] text-white rounded-lg border border-[#00B8D4]/30 focus:border-[#00B8D4] focus:outline-none"
+                              className="w-full px-4 py-2 bg-[#1a1f35] text-white rounded-lg border border-[#00B8D4]/30 focus:border-[#00B8D4] focus:outline-none cursor-pointer"
                             >
-                              <option value="normal">Normal 🟢</option>
-                              <option value="alta">Alta 🟠</option>
-                              <option value="critica">Crítica 🔴</option>
+                              <option value="normal">Normal</option>
+                              <option value="alta">Alta</option>
+                              <option value="critica">Crítica</option>
                             </select>
                           </div>
                         </div>
@@ -556,12 +565,12 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
                             <select
                               value={createData.notificationType}
                               onChange={(e) => setCreateData({ ...createData, notificationType: e.target.value as any })}
-                              className="w-full px-4 py-2 bg-[#1a1f35] text-white rounded-lg border border-[#00B8D4]/30 focus:border-[#00B8D4] focus:outline-none"
+                              className="w-full px-4 py-2 bg-[#1a1f35] text-white rounded-lg border border-[#00B8D4]/30 focus:border-[#00B8D4] focus:outline-none cursor-pointer"
                             >
-                              <option value="system">Sistema 🔔</option>
-                              <option value="email">Email 📧</option>
-                              <option value="sms">SMS 💬</option>
-                              <option value="push">Push 📱</option>
+                              <option value="system">Sistema</option>
+                              <option value="email">Email</option>
+                              <option value="sms">SMS</option>
+                              <option value="push">Push</option>
                             </select>
                           </div>
 
@@ -570,11 +579,11 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
                             <select
                               value={createData.repetition}
                               onChange={(e) => setCreateData({ ...createData, repetition: e.target.value as any })}
-                              className="w-full px-4 py-2 bg-[#1a1f35] text-white rounded-lg border border-[#00B8D4]/30 focus:border-[#00B8D4] focus:outline-none"
+                              className="w-full px-4 py-2 bg-[#1a1f35] text-white rounded-lg border border-[#00B8D4]/30 focus:border-[#00B8D4] focus:outline-none cursor-pointer"
                             >
-                              <option value="once">Uma vez 1️⃣</option>
-                              <option value="diario">Diariamente 📅</option>
-                              <option value="semanal">Semanalmente 📆</option>
+                              <option value="once">Uma vez</option>
+                              <option value="diario">Diariamente</option>
+                              <option value="semanal">Semanalmente</option>
                             </select>
                           </div>
                         </div>
@@ -614,26 +623,30 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
                       </motion.div>
                     )}
                   </AnimatePresence>
-
-                  <div className="flex gap-3 pt-4 border-t border-[#00B8D4]/20">
-                    <motion.button
-                      onClick={() => setShowCreateModal(false)}
-                      className="flex-1 py-3 px-4 bg-gray-600 text-white font-bold rounded-lg hover:bg-gray-700 transition-all"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      Cancelar
-                    </motion.button>
-                    <motion.button
-                      onClick={createAlert}
-                      disabled={loading}
-                      className="flex-1 py-3 px-4 bg-gradient-to-r from-[#5B52FF] to-[#7C3AED] text-white font-bold rounded-lg hover:from-[#4F46E5] hover:to-[#6D28D9] transition-all disabled:opacity-50"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      {loading ? 'Criando...' : 'Criar Alerta'}
-                    </motion.button>
                   </div>
+                </div>
+
+                {/* Footer fixo */}
+                <div>
+                  <motion.button
+                    onClick={() => setShowCreateModal(false)}
+                    className="py-3 px-4 bg-gray-600 text-white font-bold rounded-lg hover:bg-gray-700 transition-all"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    style={{ width: 'calc(50% - 6px)', display: 'inline-block' }}
+                  >
+                    Cancelar
+                  </motion.button>
+                  <motion.button
+                    onClick={createAlert}
+                    disabled={loading}
+                    className="py-3 px-4 bg-gradient-to-r from-[#5B52FF] to-[#7C3AED] text-white font-bold rounded-lg hover:from-[#4F46E5] hover:to-[#6D28D9] transition-all disabled:opacity-50"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    style={{ width: 'calc(50% - 6px)', display: 'inline-block', marginLeft: '12px' }}
+                  >
+                    {loading ? 'Criando...' : 'Criar Alerta'}
+                  </motion.button>
                 </div>
               </motion.div>
             </motion.div>
@@ -643,3 +656,4 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
     </div>
   );
 }
+
