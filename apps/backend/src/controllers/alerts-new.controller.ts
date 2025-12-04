@@ -7,7 +7,7 @@ import {
   listAlertsQuerySchema,
   idParamSchema,
 } from '../validators/alerts.validator';
-import { logger } from '../utils/logger';
+import { logInfo, logError } from '../utils/logger';
 
 const alertsService = new AlertsService();
 

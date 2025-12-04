@@ -8,8 +8,8 @@ class AlertsRepository {
     });
   }
 
-  async findAll(userId, skip = 0, limit = 10, where = {}) {
-    const whereClause = { ...where };
+  async findAll(userId, skip = 0, limit = 10, where: any = {}) {
+    const whereClause: any = { ...where };
     if (userId) whereClause.userId = userId;
 
     return prisma.alert.findMany({

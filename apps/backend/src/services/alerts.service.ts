@@ -112,15 +112,15 @@ class AlertsService {
   /**
    * Listar alertas com paginação e filtros
    */
-  async listar(userId, page = 1, limit = 10, filters = {}) {
+  async listar(userId, page = 1, limit = 10, filters: any = {}) {
     const skip = (page - 1) * limit;
 
     const where: any = { userId };
 
-    if (filters.priority) where.prioridade = filters.priority;
-    if (filters.tipo) where.tipo = filters.tipo;
-    if (filters.isActive !== undefined)
-      where.isActive = filters.isActive === "true";
+    if ((filters as any).priority) where.prioridade = (filters as any).priority;
+    if ((filters as any).tipo) where.tipo = (filters as any).tipo;
+    if ((filters as any).isActive !== undefined)
+      where.isActive = (filters as any).isActive === "true";
 
     const [alertas, total] = await Promise.all([
       this.repo.findAll(userId, skip, limit, where),
@@ -322,11 +322,11 @@ AlertsService.prototype.findAll = function (userId) {
 AlertsService.prototype.findById = function (id) {
   return this.buscarPorId(id);
 };
-AlertsService.prototype.update = function (id, data) {
+AlertsService.prototype.update = function (id: any, data: any) {
   return this.atualizar(id, undefined, data);
 };
-AlertsService.prototype.delete = function (id) {
-  return this.remover(id);
+AlertsService.prototype.delete = function (id: any) {
+  return this.remover(id, undefined);
 };
 
 module.exports = { AlertsService };

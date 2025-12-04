@@ -67,10 +67,10 @@ router.get("/", async (req, res) => {
     coinCache = coins;
     lastCacheUpdate = now;
 
-    res.json(coins);
+    return res.json(coins);
   } catch (error: any) {
     console.error("[CoinsRoute]", error.message);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: error.message || "Failed to fetch coins",
     });

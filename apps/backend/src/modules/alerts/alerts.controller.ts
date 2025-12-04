@@ -5,7 +5,7 @@ export default {
   async criar(req: any, res: any, validated?: any) {
     try {
       const body = arguments[2] ?? req.body;
-      const alert = await service.criarAlerta(req.userId, body);
+      const alert = await service.criarAlerta(String(req.userId), body);
       return sendSuccess(res, alert, 201);
     } catch (err: any) {
       return sendError(res, "INTERNAL_ERROR", err.message);
@@ -15,7 +15,7 @@ export default {
   async listar(req: any, res: any, opts?: any) {
     try {
       const opts = arguments[2] ?? req.query ?? {};
-      const alerts = await service.listarAlertas(req.userId, opts);
+      const alerts = await service.listarAlertas(String(req.userId), opts);
       return sendSuccess(res, alerts);
     } catch (err: any) {
       return sendError(res, "INTERNAL_ERROR", err.message);
@@ -26,7 +26,7 @@ export default {
     try {
       const params = arguments[2] ?? req.params;
       const body = arguments[3] ?? req.body;
-      const alert = await service.atualizarAlerta(req.userId, params.id, body);
+      const alert = await service.atualizarAlerta(String(req.userId), params.id, body);
       return sendSuccess(res, alert);
     } catch (err: any) {
       return sendError(res, "INTERNAL_ERROR", err.message);
@@ -36,7 +36,7 @@ export default {
   async remover(req: any, res: any, params?: any) {
     try {
       const params = arguments[2] ?? req.params;
-      await service.deletarAlerta(req.userId, params.id);
+      await service.deletarAlerta(String(req.userId), params.id);
       return sendSuccess(res, { message: "Alerta removido" });
     } catch (err: any) {
       return sendError(res, "INTERNAL_ERROR", err.message);

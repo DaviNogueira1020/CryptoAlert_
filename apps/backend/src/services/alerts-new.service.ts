@@ -55,7 +55,7 @@ export class AlertsService {
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
-        include: includeUser ? { user: { select: { id: true, name: true, email: true } } } : false,
+        include: includeUser ? { user: { select: { id: true, name: true, email: true } } } : undefined,
       }),
       prisma.alert.count({ where }),
     ]);
