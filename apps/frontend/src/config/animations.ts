@@ -244,6 +244,7 @@ export const getDelayVariant = (index: number, baseDelay = 0.05) => {
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getCombinedVariants = (...variants: any[]) => {
   return variants.reduce((acc, variant) => ({ ...acc, ...variant }), {});
 };

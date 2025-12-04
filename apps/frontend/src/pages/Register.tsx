@@ -33,8 +33,9 @@ export default function Register() {
         localStorage.setItem('userName', name);
         navigate('/dashboard');
       }
-    } catch (err: any) {
-      setError(err.message || 'Error registering');
+    } catch (err) {
+      const errorMsg = (err instanceof Error) ? err.message : 'Error registering';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }

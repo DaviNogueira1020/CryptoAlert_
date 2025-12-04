@@ -51,7 +51,7 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
         } else {
           throw new Error('Local API retornou erro');
         }
-      } catch (localError) {
+      } catch (_localError) {
         // Se falhar, usar CoinGecko diretamente
         console.log('Usando CoinGecko como fallback...');
         const coinIds = 'bitcoin,ethereum,binancecoin,ripple,cardano,solana,dogecoin,polkadot,litecoin,chainlink';
@@ -64,6 +64,7 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
         data = await response.json();
         
         // Transformar dados do CoinGecko para o formato esperado
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         data = data.map((coin: any) => ({
           id: coin.id,
           symbol: coin.symbol.toUpperCase(),
@@ -79,9 +80,10 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
       setCoins(data);
       setFilteredCoins(data);
       setLastUpdate(new Date());
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error fetching coins:', err);
-      setError(err.message || 'Erro ao carregar cotações');
+      const errorMsg = (err instanceof Error) ? err.message : 'Erro ao carregar cotações';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }

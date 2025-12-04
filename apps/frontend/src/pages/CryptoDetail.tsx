@@ -14,6 +14,7 @@ export function CryptoDetail({ coinId: propCoinId, onBack: propOnBack }: CryptoD
   const coinId = paramCoinId || propCoinId || '';
   const onBack = propOnBack || (() => navigate('/dashboard'));
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [coin, setCoin] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -33,9 +34,10 @@ export function CryptoDetail({ coinId: propCoinId, onBack: propOnBack }: CryptoD
         const data = await res.json();
         setCoin(data);
         setError('');
-      } catch (err: any) {
+      } catch (err) {
         console.error('Error fetching coin details:', err);
-        setError(err.message || 'Falha ao carregar detalhes');
+        const errorMsg = (err instanceof Error) ? err.message : 'Falha ao carregar detalhes';
+        setError(errorMsg);
       } finally {
         setLoading(false);
       }

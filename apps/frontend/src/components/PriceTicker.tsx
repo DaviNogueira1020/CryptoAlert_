@@ -22,7 +22,7 @@ export function PriceTicker() {
             setCoins(data.slice(0, 10));
             return;
           }
-        } catch (e) {
+        } catch (_e) {
           console.log('Backend unavailable, using CoinGecko');
         }
 
@@ -33,6 +33,7 @@ export function PriceTicker() {
 
         if (response.ok) {
           const data = await response.json();
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const formattedCoins = data.map((coin: any) => ({
             symbol: coin.symbol.toUpperCase(),
             current_price: coin.current_price,

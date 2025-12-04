@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { COLORS, BUTTON_STYLES, CARD_STYLES, combineClasses, TRANSITIONS } from '../../config/design.system';
+import { BUTTON_STYLES, combineClasses } from '../../config/design.system';
 
 // ============================================================================
 // BOTÕES
@@ -38,6 +38,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         whileTap={{ scale: disabled ? 1 : 0.98 }}
         className={combineClasses(baseClass, sizeClass, variantClass, roundedClass, className)}
         disabled={disabled || isLoading}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         {...(props as any)}
       >
         {isLoading ? (
@@ -289,6 +290,7 @@ export const Divider = React.forwardRef<HTMLDivElement, DividerProps>(
           'from-cyan/0 via-cyan to-cyan/0',
           className
         )}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         {...(props as any)}
       />
     ) : (
@@ -317,7 +319,7 @@ interface TooltipProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(
-  ({ content, position = 'top', children, className, ...props }, ref) => {
+  ({ content, position = 'top', children, ...props }, ref) => {
     const [isVisible, setIsVisible] = React.useState(false);
 
     const positionClass = {

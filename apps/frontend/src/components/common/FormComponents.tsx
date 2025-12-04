@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
-import { COLORS } from '../../config/design.system';
 
 // ============================================================================
 // FORM FIELD
@@ -402,9 +401,6 @@ interface FormProps extends React.FormHTMLAttributes<HTMLFormElement> {
 
 export const Form: React.FC<FormProps> = ({
   children,
-  isLoading = false,
-  submitLabel = 'Enviar',
-  submitVariant = 'primary',
   className = '',
   ...props
 }) => {

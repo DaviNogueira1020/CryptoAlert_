@@ -1,16 +1,14 @@
 import { useState } from 'react';
-import { User, Mail, Bell, Shield, LogOut } from 'lucide-react';
+import { User, Mail, Bell, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
 interface ProfileProps {
   userName: string;
   userEmail: string;
-  alertCount: number;
 }
 
-export function Profile({ userName, userEmail, alertCount }: ProfileProps) {
-  const [showSettings, setShowSettings] = useState(false);
+export function Profile({ userName, userEmail }: ProfileProps) {
   const [notifications, setNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
 

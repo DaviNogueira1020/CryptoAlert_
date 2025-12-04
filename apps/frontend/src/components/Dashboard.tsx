@@ -42,7 +42,7 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
           setLoading(false);
           return;
         }
-      } catch (e) {
+      } catch (_e) {
         console.log('Backend unavailable, using CoinGecko');
       }
 
@@ -56,7 +56,7 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
       }
 
       const data = await response.json();
-      const formattedCoins = data.map((coin: any) => ({
+      const formattedCoins = data.map((coin: Record<string, unknown>) => ({
         id: coin.id,
         symbol: coin.symbol.toUpperCase(),
         name: coin.name,
@@ -71,9 +71,10 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
       setFilteredCoins(formattedCoins);
       setLastUpdate(new Date());
       setError('');
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error fetching coins:', err);
-      setError(err.message || 'Erro ao carregar cotações');
+      const errorMsg = (err instanceof Error) ? err.message : 'Erro ao carregar cotações';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }

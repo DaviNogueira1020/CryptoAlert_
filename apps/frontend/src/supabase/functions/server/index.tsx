@@ -253,7 +253,9 @@ app.get('/make-server-e49cbdd6/trends', async (c) => {
 });
 
 // Função auxiliar para analisar feed RSS
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseRSS(rssText: string): any[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const articles: any[] = [];
   const itemRegex = /<item>([\s\S]*?)<\/item>/g;
   const titleRegex = /<title><!\[CDATA\[(.*?)\]\]><\/title>/;

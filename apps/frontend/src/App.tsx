@@ -18,7 +18,6 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [selectedCoinId, setSelectedCoinId] = useState<string | null>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [alertCount, setAlertCount] = useState(0);
 
   useEffect(() => {
     checkExistingSession();
@@ -86,7 +85,7 @@ export default function App() {
     setCurrentPage('detail');
   };
 
-  const handleCreateAlertFromDetail = (coinId: string, coinName: string, currentPrice: number) => {
+  const handleCreateAlertFromDetail = () => {
     setCurrentPage('alerts');
   };
 

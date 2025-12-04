@@ -40,6 +40,7 @@ export function News() {
       }
 
       const data = await response.json();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const articles = data.coins?.slice(0, 10).map((coin: any) => ({
         id: coin.item.id,
         title: `${coin.item.name} (${coin.item.symbol.toUpperCase()})`,
@@ -48,9 +49,10 @@ export function News() {
         pubDate: new Date().toISOString(),
       })) || [];
       setNews(articles);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error fetching news:', err);
-      setError(err.message || 'Erro ao carregar notícias');
+      const errorMsg = (err instanceof Error) ? err.message : 'Erro ao carregar notícias';
+      setError(errorMsg);
     }
   };
 
@@ -66,7 +68,7 @@ export function News() {
 
       const data = await response.json();
       setTrending(data.coins || []);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error fetching trends:', err);
     }
   };

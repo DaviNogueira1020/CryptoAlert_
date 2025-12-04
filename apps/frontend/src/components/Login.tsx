@@ -52,8 +52,8 @@ export function Login({ onLogin }: LoginProps) {
       }
 
       onLogin(token, displayName, email);
-    } catch (err: any) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao autenticar';
+    } catch (err) {
+      const errorMessage = (err instanceof Error) ? err.message : 'Erro ao autenticar';
       console.error('Authentication error:', err);
       setError(errorMessage);
       toast.error(errorMessage);

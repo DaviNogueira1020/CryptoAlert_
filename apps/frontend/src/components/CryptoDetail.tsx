@@ -66,9 +66,10 @@ export function CryptoDetail({ coinId, onBack, onCreateAlert }: CryptoDetailProp
       const data = await response.json();
       setCoin(data);
       setError('');
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error fetching coin details:', err);
-      setError(err.message || 'Erro ao carregar detalhes');
+      const errorMsg = (err instanceof Error) ? err.message : 'Erro ao carregar detalhes';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -76,6 +77,7 @@ export function CryptoDetail({ coinId, onBack, onCreateAlert }: CryptoDetailProp
 
   useEffect(() => {
     fetchCoinDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coinId]);
 
   if (loading) {

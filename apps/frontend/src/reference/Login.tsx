@@ -49,9 +49,10 @@ export function Login({ onLogin }: LoginProps) {
       
       toast.success(`Welcome, ${userName}!`);
       onLogin(token, userName);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Authentication error:', err);
-      setError(err.message || 'Authentication failed');
+      const errorMsg = (err instanceof Error) ? err.message : 'Authentication failed';
+      setError(errorMsg);
       toast.error('Authentication failed');
     } finally {
       setLoading(false);

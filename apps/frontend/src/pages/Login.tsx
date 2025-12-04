@@ -46,10 +46,11 @@ export function Login({ onLogin }: LoginProps) {
         try {
           localStorage.setItem('authToken', accessToken);
           localStorage.setItem('userName', userName);
-        } catch (_) {}
+          // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
+        } catch (_e) {}
         navigate('/dashboard');
       }
-    } catch (err: any) {
+    } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       setError(errorMessage);
     } finally {

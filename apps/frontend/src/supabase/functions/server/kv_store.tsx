@@ -18,6 +18,7 @@ const client = () => createClient(
 );
 
 // Armazena um par chave-valor no banco de dados.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const set = async (key: string, value: any): Promise<void> => {
   const supabase = client()
   const { error } = await supabase.from("kv_store_e49cbdd6").upsert({
@@ -30,6 +31,7 @@ export const set = async (key: string, value: any): Promise<void> => {
 };
 
 // Recupera um par chave-valor do banco de dados.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const get = async (key: string): Promise<any> => {
   const supabase = client()
   const { data, error } = await supabase.from("kv_store_e49cbdd6").select("value").eq("key", key).maybeSingle();
@@ -49,6 +51,7 @@ export const del = async (key: string): Promise<void> => {
 };
 
 // Armazena múltiplos pares chave-valor no banco de dados.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mset = async (keys: string[], values: any[]): Promise<void> => {
   const supabase = client()
   const { error } = await supabase.from("kv_store_e49cbdd6").upsert(keys.map((k, i) => ({ key: k, value: values[i] })));
@@ -58,6 +61,7 @@ export const mset = async (keys: string[], values: any[]): Promise<void> => {
 };
 
 // Recupera múltiplos pares chave-valor do banco de dados.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mget = async (keys: string[]): Promise<any[]> => {
   const supabase = client()
   const { data, error } = await supabase.from("kv_store_e49cbdd6").select("value").in("key", keys);

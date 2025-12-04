@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Bell, Plus, Trash2, TrendingUp, TrendingDown, X, Copy, Download } from 'lucide-react';
+import { Bell, Plus, Trash2, TrendingUp, TrendingDown, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
-import { alertsService, Alert } from '../services/alertsService';
+import { alertsService, Alert, CreateAlertInput } from '../services/alertsService';
 
 interface AlertsProps {
   accessToken?: string;
 }
 
-export function Alerts({ accessToken: _accessToken }: AlertsProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function Alerts(_props: AlertsProps) {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -39,7 +40,7 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
     try {
       setLoading(true);
       const result = await alertsService.getAll(1, 10);
-      setAlerts(result.alerts || []);
+      setAlerts(Array.isArray(result) ? result : []);
       setError('');
     } catch (err) {
       console.error('Erro ao carregar alertas:', err);
@@ -66,7 +67,7 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
       setLoading(true);
 
       // Preparar dados para envio
-      const payload: any = {
+      const alertPayload: CreateAlertInput = {
         crypto: createData.crypto.toUpperCase(),
         tipo: createData.tipo,
         direction: createData.direction,
@@ -80,18 +81,18 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
 
       // Adicionar campo específico conforme tipo
       if (createData.tipo === 'precoAlvo' && createData.precoAlvo) {
-        payload.precoAlvo = parseFloat(createData.precoAlvo);
+        alertPayload.precoAlvo = parseFloat(createData.precoAlvo);
       }
 
       // Adicionar data/hora se fornecidas
       if (createData.alertDate) {
-        payload.alertDate = createData.alertDate;
+        alertPayload.alertDate = createData.alertDate;
       }
       if (createData.alertTime) {
-        payload.alertTime = createData.alertTime;
+        alertPayload.alertTime = createData.alertTime;
       }
 
-      const newAlert = await alertsService.create(payload);
+      const newAlert = await alertsService.create(alertPayload);
       
       setAlerts([newAlert, ...alerts]);
       toast.success(`Alerta criado para ${createData.crypto.toUpperCase()}`);
@@ -112,9 +113,10 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
         alertTime: '',
         baseCurrency: 'USDT',
       });
-    } catch (err: any) {
+    } catch (err) {
       console.error('Erro ao criar alerta:', err);
-      toast.error(err.response?.data?.message || 'Erro ao criar alerta');
+      const errorMsg = (err instanceof Error) ? err.message : 'Erro ao criar alerta';
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -139,51 +141,6 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
     } catch (err) {
       console.error('Erro ao atualizar alerta:', err);
       toast.error('Erro ao atualizar alerta');
-    }
-  };
-
-  const duplicateAlert = async (id: string) => {
-    try {
-      setLoading(true);
-      const newAlert = await alertsService.duplicate(id);
-      setAlerts([newAlert, ...alerts]);
-      toast.success('Alerta duplicado com sucesso');
-    } catch (err) {
-      console.error('Erro ao duplicar alerta:', err);
-      toast.error('Erro ao duplicar alerta');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const exportAlerts = async (format: 'json' | 'csv') => {
-    try {
-      const result = await alertsService.export(format);
-      
-      if (format === 'csv') {
-        // Para CSV, o serviço já retorna o arquivo
-        const element = document.createElement('a');
-        element.setAttribute('href', `data:text/csv;charset=utf-8,${encodeURIComponent(result)}`);
-        element.setAttribute('download', 'alertas.csv');
-        element.style.display = 'none';
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
-      } else {
-        // Para JSON
-        const element = document.createElement('a');
-        element.setAttribute('href', `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(result, null, 2))}`);
-        element.setAttribute('download', 'alertas.json');
-        element.style.display = 'none';
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
-      }
-      
-      toast.success(`Alertas exportados em ${format.toUpperCase()}`);
-    } catch (err) {
-      console.error('Erro ao exportar alertas:', err);
-      toast.error('Erro ao exportar alertas');
     }
   };
 
@@ -227,28 +184,6 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
             <Plus className="w-5 h-5" />
             Novo Alerta
           </motion.button>
-
-          <motion.button
-            onClick={() => exportAlerts('json')}
-            className="flex items-center gap-2 px-4 py-3 bg-[#1a1f35] text-white font-bold rounded-lg hover:bg-[#252a3a] transition-all border border-[#00B8D4]/30"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            disabled={alerts.length === 0}
-          >
-            <Download className="w-5 h-5" />
-            JSON
-          </motion.button>
-
-          <motion.button
-            onClick={() => exportAlerts('csv')}
-            className="flex items-center gap-2 px-4 py-3 bg-[#1a1f35] text-white font-bold rounded-lg hover:bg-[#252a3a] transition-all border border-[#00B8D4]/30"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            disabled={alerts.length === 0}
-          >
-            <Download className="w-5 h-5" />
-            CSV
-          </motion.button>
         </motion.div>
 
         {loading && alerts.length === 0 ? (
@@ -268,7 +203,7 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
           >
             <Bell className="w-12 h-12 text-gray-600 mx-auto mb-4" />
             <p className="text-gray-400 text-lg">Nenhum alerta criado ainda</p>
-            <p className="text-gray-500 text-sm">Clique em "Novo Alerta" para começar</p>
+            <p className="text-gray-500 text-sm">Clique em &quot;Novo Alerta&quot; para começar</p>
           </motion.div>
         ) : (
           <motion.div
@@ -304,15 +239,6 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <motion.button
-                        onClick={() => duplicateAlert(alert.id)}
-                        className="text-gray-400 hover:text-[#00B8D4] transition-colors p-2 hover:bg-[#1a1f35] rounded"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        title="Duplicar alerta"
-                      >
-                        <Copy className="w-5 h-5" />
-                      </motion.button>
                       <motion.button
                         onClick={() => deleteAlert(alert.id)}
                         className="text-gray-400 hover:text-red-400 transition-colors p-2 hover:bg-[#1a1f35] rounded"
@@ -454,7 +380,10 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
                         <label className="block text-white text-sm font-bold mb-2">Tipo de Alerta</label>
                         <select
                           value={createData.tipo}
-                          onChange={(e) => setCreateData({ ...createData, tipo: e.target.value as any })}
+                          onChange={(e) => {
+                            const newTipo = e.target.value as any;
+                            setCreateData({ ...createData, tipo: newTipo });
+                          }}
                           className="w-full px-4 py-2 bg-[#1a1f35] text-white rounded-lg border border-[#00B8D4]/30 focus:border-[#00B8D4] focus:outline-none cursor-pointer"
                         >
                           <option value="precoAlvo">Preço Alvo</option>
@@ -549,6 +478,7 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
                             <label className="block text-white text-sm font-bold mb-2">Prioridade</label>
                             <select
                               value={createData.priority}
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
                               onChange={(e) => setCreateData({ ...createData, priority: e.target.value as any })}
                               className="w-full px-4 py-2 bg-[#1a1f35] text-white rounded-lg border border-[#00B8D4]/30 focus:border-[#00B8D4] focus:outline-none cursor-pointer"
                             >
@@ -564,6 +494,7 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
                             <label className="block text-white text-sm font-bold mb-2">Tipo de Notificação</label>
                             <select
                               value={createData.notificationType}
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
                               onChange={(e) => setCreateData({ ...createData, notificationType: e.target.value as any })}
                               className="w-full px-4 py-2 bg-[#1a1f35] text-white rounded-lg border border-[#00B8D4]/30 focus:border-[#00B8D4] focus:outline-none cursor-pointer"
                             >
@@ -578,6 +509,7 @@ export function Alerts({ accessToken: _accessToken }: AlertsProps) {
                             <label className="block text-white text-sm font-bold mb-2">Repetição</label>
                             <select
                               value={createData.repetition}
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
                               onChange={(e) => setCreateData({ ...createData, repetition: e.target.value as any })}
                               className="w-full px-4 py-2 bg-[#1a1f35] text-white rounded-lg border border-[#00B8D4]/30 focus:border-[#00B8D4] focus:outline-none cursor-pointer"
                             >
