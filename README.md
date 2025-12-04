@@ -1,4 +1,14 @@
-# CriptoAlert 🚀
+# CryptoAlert Monorepo
+
+Projeto monorepo contendo frontend (React + Vite + Tailwind + Framer Motion) e backend (Node/Express/TypeScript).
+
+## Requisitos
+- Node.js >= 18
+- npm >= 9
+- Git (para Husky, se utilizado)
+
+## Instalação
+Na raiz do repositório:# CriptoAlert 🚀
 
 Real-time cryptocurrency price alerts application with TypeScript, Node.js, React, and PostgreSQL.
 

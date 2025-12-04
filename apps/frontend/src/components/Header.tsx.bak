@@ -1,0 +1,41 @@
+import { Link, useLocation } from 'react-router-dom';
+import { strings } from '../i18n/strings';
+
+export default function Header() {
+  const loc = useLocation();
+  // Oculta header em páginas de autenticação
+  if (
+    loc.pathname.startsWith('/login') ||
+    loc.pathname.startsWith('/register') ||
+    loc.pathname.includes('/auth')
+  )
+    return null;
+
+  return (
+    <header className="w-full bg-white shadow sticky top-0 z-40" role="banner">
+      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        <Link
+          to="/dashboard"
+          className="font-semibold text-lg text-gray-800"
+          aria-label={`${strings.appName} - ${strings.nav.dashboard}`}
+        >
+          {strings.appName}
+        </Link>
+        <nav className="flex items-center gap-4" aria-label="Principal">
+          <Link to="/dashboard" className="text-sm text-gray-700 hover:underline">
+            {strings.nav.dashboard}
+          </Link>
+          <Link to="/alerts" className="text-sm text-gray-700 hover:underline">
+            {strings.nav.alerts}
+          </Link>
+          <Link to="/settings" className="text-sm text-gray-700 hover:underline">
+            {strings.nav.settings}
+          </Link>
+          <Link to="/login" className="text-sm text-blue-600 hover:underline">
+            {strings.nav.login}
+          </Link>
+        </nav>
+      </div>
+    </header>
+  );
+}

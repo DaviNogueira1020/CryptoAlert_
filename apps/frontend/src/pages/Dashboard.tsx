@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Search, TrendingUp, TrendingDown, ArrowRight, RefreshCw } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
+import { Search, TrendingUp, TrendingDown, RefreshCw, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 interface Coin {
   id: string;
@@ -14,12 +17,11 @@ interface Coin {
 }
 
 interface DashboardProps {
-  onViewDetails: (coinId: string) => void;
+  onViewDetails?: (coinId: string) => void;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
 export function Dashboard({ onViewDetails }: DashboardProps) {
+  const navigate = useNavigate();
   const [coins, setCoins] = useState<Coin[]>([]);
   const [filteredCoins, setFilteredCoins] = useState<Coin[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,20 +29,56 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
   const [error, setError] = useState('');
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
+  const handleViewDetails = (coinId: string) => {
+    if (onViewDetails) {
+      onViewDetails(coinId);
+    } else {
+      navigate(`/crypto/${coinId}`);
+    }
+  };
+
   const fetchCoins = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/coins`);
-
-      if (!response.ok) {
-        throw new Error('Erro ao buscar dados');
+      setError('');
+      
+      // Tentar primeiro com a API local
+      let data;
+      try {
+        const response = await fetch(`${API_URL}/coins`);
+        if (response.ok) {
+          data = await response.json();
+        } else {
+          throw new Error('Local API retornou erro');
+        }
+      } catch (localError) {
+        // Se falhar, usar CoinGecko diretamente
+        console.log('Usando CoinGecko como fallback...');
+        const coinIds = 'bitcoin,ethereum,binancecoin,ripple,cardano,solana,dogecoin,polkadot,litecoin,chainlink';
+        const response = await fetch(
+          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coinIds}&order=market_cap_desc&per_page=250&sparkline=false`
+        );
+        if (!response.ok) {
+          throw new Error('Erro ao buscar dados da CoinGecko');
+        }
+        data = await response.json();
+        
+        // Transformar dados do CoinGecko para o formato esperado
+        data = data.map((coin: any) => ({
+          id: coin.id,
+          symbol: coin.symbol.toUpperCase(),
+          name: coin.name,
+          image: coin.image,
+          current_price: coin.current_price || 0,
+          price_change_percentage_24h: coin.price_change_percentage_24h || 0,
+          market_cap: coin.market_cap || 0,
+          total_volume: coin.total_volume || 0,
+        }));
       }
-
-      const data = await response.json();
+      
       setCoins(data);
       setFilteredCoins(data);
       setLastUpdate(new Date());
-      setError('');
     } catch (err: any) {
       console.error('Error fetching coins:', err);
       setError(err.message || 'Erro ao carregar cotações');
@@ -85,16 +123,16 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
   };
 
   return (
-    <div className="min-h-screen bg-black py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="w-full min-h-screen bg-black py-12">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <motion.div
-          className="mb-8"
+          className="mb-8 space-y-6"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-white text-3xl mb-2">Dashboard de Cotações</h1>
+              <h1 className="text-white text-4xl font-bold mb-2">Painel de Cotações</h1>
               <p className="text-gray-400">
                 Última atualização: {lastUpdate.toLocaleTimeString('pt-BR')}
               </p>
@@ -102,7 +140,7 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
             <motion.button
               onClick={fetchCoins}
               disabled={loading}
-              className="flex items-center gap-2 px-6 py-3 bg-[#5B52FF] text-white rounded-lg hover:bg-[#4F46E5] transition-colors disabled:opacity-50 shadow-lg shadow-[#5B52FF]/30"
+              className="flex items-center gap-2 px-6 py-3 bg-[#5B52FF] text-white rounded-lg hover:bg-[#4F46E5] transition-colors disabled:opacity-50 shadow-lg shadow-[#5B52FF]/30 whitespace-nowrap"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -127,7 +165,7 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-red-900/30 border border-red-500 text-red-200 px-4 py-3 rounded-lg mb-6"
+            className="bg-red-900 border border-red-500 text-red-200 px-4 py-3 rounded-lg mb-8 mt-6"
           >
             {error}
           </motion.div>
@@ -140,13 +178,14 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
           </div>
         ) : (
           <motion.div
-            className="bg-[#0A0E27] rounded-xl overflow-hidden border-2 border-[#00B8D4]/30"
+            className="mt-10 rounded-xl overflow-hidden border-2 border-[#00B8D4] shadow-lg"
+            style={{ backgroundColor: '#0A0E27' }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-black/50">
+                <thead className="bg-black">
                   <tr>
                     <th className="px-6 py-4 text-left text-white">#</th>
                     <th className="px-6 py-4 text-left text-white">Moeda</th>
@@ -157,12 +196,12 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
                     <th className="px-6 py-4 text-right text-white">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#00B8D4]/20">
+                <tbody className="divide-y divide-[#00B8D4]">
                   <AnimatePresence>
                     {filteredCoins.map((coin, index) => (
                       <motion.tr
                         key={coin.id}
-                        className="hover:bg-[#00B8D4]/10 transition-colors"
+                        className="bg-[#0A0E27] hover:bg-[#07121a] transition-colors"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.02 }}
@@ -205,7 +244,7 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
                         </td>
                         <td className="px-6 py-4 text-right">
                           <motion.button
-                            onClick={() => onViewDetails(coin.id)}
+                            onClick={() => handleViewDetails(coin.id)}
                             className="inline-flex items-center gap-1 text-[#00B8D4] hover:text-[#00D9FF] transition-colors"
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
@@ -232,5 +271,3 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
     </div>
   );
 }
-
-export default Dashboard;

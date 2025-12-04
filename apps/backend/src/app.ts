@@ -15,6 +15,10 @@ import openapi from "../docs/openapi.json";
 
 // Alerts routes
 import alertsRoutes from "./modules/alerts/alerts.routes";
+import alertsNewRoutes from "./routes/alerts-new.routes";
+
+// Coins routes
+import coinsRoutes from "./routes/coins.routes";
 
 // Notifications routes (ADICIONE ESTA LINHA)
 const notificationRoutes = require("./modules/notifications/notification.routes");
@@ -41,7 +45,8 @@ app.use(limiter);
 // -------------------
 app.use("/health", healthRoutes);
 app.use("/auth", authRoutes);
-app.use("/alerts", alertsRoutes);
+app.use("/coins", coinsRoutes);
+app.use("/alerts", alertsNewRoutes); // Nova estrutura de alertas
 
 // Rota de Notificações (ADICIONE ESTA LINHA)
 app.use("/notifications", notificationRoutes);
