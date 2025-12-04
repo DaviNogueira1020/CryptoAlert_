@@ -4,12 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { alertsService, Alert, CreateAlertInput } from '../services/alertsService';
 
-interface AlertsProps {
-  accessToken?: string;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function Alerts(_props: AlertsProps) {
+export function Alerts() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -381,6 +376,7 @@ export function Alerts(_props: AlertsProps) {
                         <select
                           value={createData.tipo}
                           onChange={(e) => {
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             const newTipo = e.target.value as any;
                             setCreateData({ ...createData, tipo: newTipo });
                           }}

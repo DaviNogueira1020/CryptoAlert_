@@ -46,8 +46,9 @@ export function Login({ onLogin }: LoginProps) {
         try {
           localStorage.setItem('authToken', accessToken);
           localStorage.setItem('userName', userName);
-          // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
-        } catch (_e) {}
+        } catch {
+          // localStorage may not be available in some contexts
+        }
         navigate('/dashboard');
       }
     } catch (err) {

@@ -326,7 +326,7 @@ AlertsService.prototype.update = function (id: any, data: any) {
   return this.atualizar(id, undefined, data);
 };
 AlertsService.prototype.delete = function (id: any) {
-  return this.remover(id, undefined);
+  return (this as any).remover(id, undefined);
 };
 
 module.exports = { AlertsService };

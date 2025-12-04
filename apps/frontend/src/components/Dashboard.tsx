@@ -42,7 +42,7 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
           setLoading(false);
           return;
         }
-      } catch (_e) {
+      } catch {
         console.log('Backend unavailable, using CoinGecko');
       }
 

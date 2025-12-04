@@ -5,7 +5,7 @@ export default {
   async criar(req: any, res: any, validated?: any) {
     try {
       const body = arguments[2] ?? req.body;
-      const alert = await service.criarAlerta(String(req.userId), body);
+      const alert = await service.criarAlerta(String(req.userId as any), body);
       return sendSuccess(res, alert, 201);
     } catch (err: any) {
       return sendError(res, "INTERNAL_ERROR", err.message);

@@ -100,7 +100,7 @@ export const alertsService = {
   },
 
   // Listar com filtros avançados
-  getAllFiltered: async (filters?: any): Promise<Alert[]> => {
+  getAllFiltered: async (filters?: Record<string, unknown>): Promise<Alert[]> => {
     const { data } = await api.get('/alerts', {
       params: filters || {},
     });

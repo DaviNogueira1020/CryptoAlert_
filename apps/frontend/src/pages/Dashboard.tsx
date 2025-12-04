@@ -51,7 +51,7 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
         } else {
           throw new Error('Local API retornou erro');
         }
-      } catch (_localError) {
+      } catch {
         // Se falhar, usar CoinGecko diretamente
         console.log('Usando CoinGecko como fallback...');
         const coinIds = 'bitcoin,ethereum,binancecoin,ripple,cardano,solana,dogecoin,polkadot,litecoin,chainlink';

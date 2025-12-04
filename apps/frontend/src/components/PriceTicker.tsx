@@ -22,7 +22,7 @@ export function PriceTicker() {
             setCoins(data.slice(0, 10));
             return;
           }
-        } catch (_e) {
+        } catch {
           console.log('Backend unavailable, using CoinGecko');
         }
 

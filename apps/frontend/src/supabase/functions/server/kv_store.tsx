@@ -81,6 +81,7 @@ export const mdel = async (keys: string[]): Promise<void> => {
 };
 
 // Pesquisa por pares chave-valor por prefixo.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getByPrefix = async (prefix: string): Promise<any[]> => {
   const supabase = client()
   const { data, error } = await supabase.from("kv_store_e49cbdd6").select("key, value").like("key", prefix + "%");

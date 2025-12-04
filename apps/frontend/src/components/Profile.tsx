@@ -89,7 +89,7 @@ export function Profile({ userName, userEmail }: ProfileProps) {
                 <p className="text-gray-400 text-sm uppercase">Alertas Ativos</p>
                 <p className="text-white text-3xl font-bold">
                   {localStorage.getItem('cryptoAlerts') 
-                    ? JSON.parse(localStorage.getItem('cryptoAlerts') || '[]').filter((a: any) => a.active).length
+                    ? JSON.parse(localStorage.getItem('cryptoAlerts') || '[]').filter((a: { active?: boolean }) => a.active).length
                     : 0}
                 </p>
               </div>
