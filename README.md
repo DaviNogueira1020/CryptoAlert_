@@ -742,6 +742,75 @@ GitHub: @DaviNogueira1020
 
 ---
 
-**Última atualização**: 4 de Dezembro 2025  
+## 🚀 DEPLOYMENT FINAL - STATUS
+
+**Última atualização**: 5 de Dezembro 2025  
 **Status do Build**: ✅ All Green  
-**Status de Deployment**: 🟡 97% (Aguardando env vars)
+**Status de Deployment**: ✅ **100% PRONTO PARA PRODUÇÃO**
+
+### URLs de Acesso
+
+- **Frontend:** https://cript-alert.netlify.app
+- **Backend API:** https://cripto-alert-ovaslvxip-davis-projects-74145666.vercel.app
+- **API Docs:** https://cripto-alert-ovaslvxip-davis-projects-74145666.vercel.app/docs
+- **GitHub:** https://github.com/DaviNogueira1020/CryptoAlert_
+
+### Configuração Netlify
+
+#### Build Command
+```
+NPM_CONFIG_PRODUCTION=false npm install --workspaces && npm run build --workspace=apps/frontend
+```
+
+#### Publish Directory
+```
+apps/frontend/build
+```
+
+#### Environment Variables
+```
+VITE_API_URL = /api
+NODE_ENV = production
+NODE_VERSION = 20
+NPM_CONFIG_PRODUCTION = false
+```
+
+### Configuração Vercel (Backend)
+
+#### Environment Variables
+```
+DATABASE_URL = [PostgreSQL Prisma URL]
+JWT_SECRET = [Gerado automaticamente]
+NODE_ENV = production
+CORS_ORIGIN = https://cript-alert.netlify.app
+```
+
+### Checklist de Deploy
+
+- [x] Frontend compilado com Vite
+- [x] Backend com TypeScript compilado
+- [x] Prisma migrations aplicadas
+- [x] Variáveis de ambiente configuradas
+- [x] CORS configurado
+- [x] Swagger documentation ativa
+- [x] API endpoints testados
+- [x] Proxy API configurado
+- [x] CI/CD automático funcional
+- [x] Fallback CoinGecko ativo
+
+### Como Acessar
+
+1. **Teste o Frontend**
+   - Acesse: https://cript-alert.netlify.app
+   - Registre um novo usuário
+   - Explore o dashboard e crie alertas
+
+2. **Teste a API**
+   - Swagger UI: https://cripto-alert-ovaslvxip-davis-projects-74145666.vercel.app/docs
+   - Use os endpoints para testar autenticação e CRUD
+
+3. **Acompanhe os Logs**
+   - Netlify: https://app.netlify.com/sites/cript-alert
+   - Vercel: https://vercel.com/davis-projects-74145666/cripto-alert
+
+---
