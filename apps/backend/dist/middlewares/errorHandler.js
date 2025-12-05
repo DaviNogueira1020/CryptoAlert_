@@ -9,10 +9,7 @@ const errorHandler = (err, req, res, next) => {
     (0, logger_1.logError)(`${code} - ${message}`, err instanceof Error ? err : new Error(String(err)));
     res.status(status).json({
         success: false,
-        error: {
-            code,
-            message,
-        },
+        error: message,
     });
 };
 exports.errorHandler = errorHandler;

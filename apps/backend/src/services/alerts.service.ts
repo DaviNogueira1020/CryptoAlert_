@@ -320,7 +320,7 @@ AlertsService.prototype.findAll = function (userId) {
   return this.listar(userId);
 };
 AlertsService.prototype.findById = function (id) {
-  return this.buscarPorId(id);
+  return this.buscarPorId(id, undefined);
 };
 AlertsService.prototype.update = function (id: any, data: any) {
   return this.atualizar(id, undefined, data);

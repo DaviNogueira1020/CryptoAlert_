@@ -58,7 +58,7 @@ export function Dashboard({ onViewDetails }: DashboardProps) {
       const data = await response.json();
       const formattedCoins = data.map((coin: Record<string, unknown>) => ({
         id: coin.id,
-        symbol: coin.symbol.toUpperCase(),
+        symbol: String(coin.symbol).toUpperCase(),
         name: coin.name,
         image: coin.image,
         current_price: coin.current_price,

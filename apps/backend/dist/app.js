@@ -15,8 +15,9 @@ const logger_1 = require("./utils/logger");
 // Swagger
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const openapi_json_1 = __importDefault(require("../docs/openapi.json"));
-// Alerts routes
-const alerts_routes_1 = __importDefault(require("./modules/alerts/alerts.routes"));
+const alerts_new_routes_1 = __importDefault(require("./routes/alerts-new.routes"));
+// Coins routes
+const coins_routes_1 = __importDefault(require("./routes/coins.routes"));
 // Notifications routes (ADICIONE ESTA LINHA)
 const notificationRoutes = require("./modules/notifications/notification.routes");
 // Users
@@ -39,7 +40,8 @@ app.use(rateLimit_middleware_1.limiter);
 // -------------------
 app.use("/health", health_routes_1.default);
 app.use("/auth", auth_routes_1.default);
-app.use("/alerts", alerts_routes_1.default);
+app.use("/coins", coins_routes_1.default);
+app.use("/alerts", alerts_new_routes_1.default); // Nova estrutura de alertas
 // Rota de Notificações (ADICIONE ESTA LINHA)
 app.use("/notifications", notificationRoutes);
 // Rotas de Usuários

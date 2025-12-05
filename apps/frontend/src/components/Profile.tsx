@@ -6,9 +6,10 @@ import { toast } from 'sonner';
 interface ProfileProps {
   userName: string;
   userEmail: string;
+  alertCount?: number;
 }
 
-export function Profile({ userName, userEmail }: ProfileProps) {
+export function Profile({ userName, userEmail, alertCount = 0 }: ProfileProps) {
   const [notifications, setNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
 
@@ -20,9 +21,9 @@ export function Profile({ userName, userEmail }: ProfileProps) {
     toast.success('Configurações salvas com sucesso!');
   };
 
-  const userAlerts = localStorage.getItem('cryptoAlerts') 
+  const userAlerts = alertCount || (localStorage.getItem('cryptoAlerts') 
     ? JSON.parse(localStorage.getItem('cryptoAlerts') || '[]').length 
-    : 0;
+    : 0);
 
   return (
     <div className="min-h-screen bg-black py-20 px-4 md:px-8">

@@ -11,11 +11,21 @@ class AlertsRepository {
             include: { user: true },
         });
     }
-    async findAll(userId) {
+    async findAll(userId, skip = 0, limit = 10, where = {}) {
+        const whereClause = { ...where };
+        if (userId)
+            whereClause.userId = userId;
         return prisma_1.default.alert.findMany({
-            where: userId ? { userId } : undefined,
+            where: whereClause,
             include: { user: true },
             orderBy: { createdAt: "desc" },
+            skip: skip > 0 ? skip : undefined,
+            take: limit > 0 ? limit : undefined,
+        });
+    }
+    async count(where = {}) {
+        return prisma_1.default.alert.count({
+            where,
         });
     }
     async findById(id) {
@@ -39,6 +49,12 @@ class AlertsRepository {
     async findByUserIdAndCrypto(userId, crypto) {
         return prisma_1.default.alert.findMany({
             where: { userId, crypto },
+        });
+    }
+    async findActiveAlerts() {
+        return prisma_1.default.alert.findMany({
+            where: { isActive: true },
+            include: { user: true },
         });
     }
 }

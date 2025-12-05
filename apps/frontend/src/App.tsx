@@ -12,12 +12,12 @@ import { Toaster, toast } from 'sonner';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [accessToken, setAccessToken] = useState('');
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [selectedCoinId, setSelectedCoinId] = useState<string | null>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [alertCount] = useState(0);
 
   useEffect(() => {
     checkExistingSession();
@@ -30,7 +30,6 @@ export default function App() {
       const email = localStorage.getItem('userEmail');
 
       if (token && name) {
-        setAccessToken(token);
         setUserName(name);
         setUserEmail(email || '');
         setIsAuthenticated(true);
@@ -43,7 +42,6 @@ export default function App() {
   };
 
   const handleLogin = (token: string, name: string, email?: string) => {
-    setAccessToken(token);
     setUserName(name);
     setUserEmail(email || '');
     setIsAuthenticated(true);
@@ -58,7 +56,6 @@ export default function App() {
   const handleLogout = () => {
     try {
       setIsAuthenticated(false);
-      setAccessToken('');
       setUserName('');
       setUserEmail('');
       setCurrentPage('dashboard');
@@ -132,9 +129,7 @@ export default function App() {
         )}
 
         {currentPage === 'alerts' && (
-          <Alerts 
-            accessToken={accessToken}
-          />
+          <Alerts />
         )}
 
         {currentPage === 'news' && <News />}
