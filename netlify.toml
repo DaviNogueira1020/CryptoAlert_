@@ -1,6 +1,6 @@
 [build]
   # Build command
-  command = "npm install --workspaces && npm run build --workspace=apps/frontend"
+  command = "NPM_CONFIG_PRODUCTION=false npm install --workspaces && npm run build --workspace=apps/frontend"
   
   # Build directory - where Netlify should look for the output
   publish = "apps/frontend/build"
