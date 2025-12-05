@@ -11,7 +11,7 @@ import { httpLogger } from "./utils/logger";
 
 // Swagger
 import swaggerUi from "swagger-ui-express";
-import openapi from "../docs/openapi.json";
+import * as openapi from "../docs/openapi.json";
 
 // Alerts routes
 import alertsRoutes from "./modules/alerts/alerts.routes";
@@ -54,7 +54,7 @@ app.use("/notifications", notificationRoutes);
 app.use("/users", usersRoutes);
 
 // Swagger UI
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapi));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapi as any));
 
 // 404 handler
 app.use((req, res) => {
