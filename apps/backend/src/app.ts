@@ -33,7 +33,9 @@ app.use(httpLogger);
 app.use(helmet());
 // CORS configuration: allow only configured origins in production, permissive in dev
 const corsOptions = {
-  origin: env.NODE_ENV === "production" ? (process.env.CORS_ORIGIN || "https://your-frontend.example.com") : true,
+  origin: env.NODE_ENV === "production" 
+    ? (process.env.CORS_ORIGIN || "https://cript-alert.netlify.app")
+    : true,
 };
 app.use(cors(corsOptions));
 app.use(express.json());
