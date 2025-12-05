@@ -11,6 +11,13 @@
   to = "/index.html"
   status = 200
 
+[[redirects]]
+  # Proxy API requests to backend
+  from = "/api/*"
+  to = "https://cripto-alert-ovaslvxip-davis-projects-74145666.vercel.app/:splat"
+  status = 200
+  force = true
+
 # Headers configuration
 [[headers]]
   for = "/*"

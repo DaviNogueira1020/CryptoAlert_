@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 // Backend routes are exposed at the root (e.g. /alerts). Do not append
 // a `/api` prefix here — keep baseURL pointing to the backend host.
