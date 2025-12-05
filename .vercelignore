@@ -20,7 +20,6 @@ __tests__
 *.test.js
 .eslintrc
 .prettierrc
-tsconfig.json
 Dockerfile
 docker-compose*.yml
 .github
