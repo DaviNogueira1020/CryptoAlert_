@@ -1,15 +1,58 @@
 {
   "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "apps/frontend/build",
   "builds": [
     {
-      "src": "apps/backend/src/server.js",
-      "use": "@vercel/node"
+      "src": "apps/backend/dist/server.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
     }
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "apps/backend/dist/server.js"
+    },
+    {
+      "src": "/auth/(.*)",
+      "dest": "apps/backend/dist/server.js"
+    },
+    {
+      "src": "/alerts(.*)",
+      "dest": "apps/backend/dist/server.js"
+    },
+    {
+      "src": "/coins(.*)",
+      "dest": "apps/backend/dist/server.js"
+    },
+    {
+      "src": "/health(.*)",
+      "dest": "apps/backend/dist/server.js"
+    },
+    {
+      "src": "/notifications(.*)",
+      "dest": "apps/backend/dist/server.js"
+    },
+    {
+      "src": "/users(.*)",
+      "dest": "apps/backend/dist/server.js"
+    },
+    {
+      "src": "/docs(.*)",
+      "dest": "apps/backend/dist/server.js"
+    },
+    {
       "src": "/(.*)",
-      "dest": "apps/backend/src/server.js"
+      "dest": "/index.html"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "JWT_SECRET": "@jwt_secret",
+    "DATABASE_URL": "@database_url",
+    "CORS_ORIGIN": "@cors_origin"
+  }
 }
