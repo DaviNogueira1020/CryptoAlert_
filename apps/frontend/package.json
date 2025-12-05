@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:vercel": "vite build",
+    "build:netlify": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "type-check": "tsc --noEmit"

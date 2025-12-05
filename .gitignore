@@ -10,6 +10,10 @@ node_modules/
 /build
 /dist
 
+# Netlify
+.netlify/
+.netlify/state.json
+
 # Misc
 .DS_Store
 .env

@@ -1,0 +1,42 @@
+[build]
+  # Build command
+  command = "npm run build --workspace=apps/frontend"
+  
+  # Build directory - where Netlify should look for the output
+  publish = "apps/frontend/build"
+
+[[redirects]]
+  # SPA redirect - all requests go to index.html for client-side routing
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers configuration
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Security headers
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    
+    # Cache control
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    # Cache hashed assets forever
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    # Never cache HTML
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Environment variables configuration
+# Set these in Netlify dashboard: Site settings > Build & deploy > Environment
+# VITE_API_URL = your API endpoint
